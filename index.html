@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>แจ้งเตือนข้าวกล่องคณะเยี่ยมชม</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f1f5fb;--card:#fff;--ink:#1f2328;--mute:#6b6b6b;--line:#dbe4f0;--brand:#1d4ed8;--brand2:#3b82f6;--soft:#eff6ff;
+--ok:#15803d;--warn:#b45309;--bad:#b91c1c;--info:#1d4ed8;--vio:#6d28d9;--r:14px}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Noto Sans Thai',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5}
+button,input,select,textarea{font:inherit}
+.hidden{display:none!important}
+/* layout */
+header{background:linear-gradient(135deg,#1e3a8a,#2563eb);color:#fff;padding:12px 18px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:20}
+header .t{font-weight:700;font-size:17px;flex:1}
+header .t small{display:block;font-weight:400;opacity:.8;font-size:12px}
+.who{font-size:13px;text-align:right}
+.badge{display:inline-block;padding:2px 10px;border-radius:99px;font-size:12px;font-weight:600}
+.role-ADMIN{background:#fde68a;color:#5b3a0a}.role-KHON{background:#bbf7d0;color:#14532d}.role-FINANCE{background:#bfdbfe;color:#1e3a8a}
+.bell{position:relative;background:rgba(255,255,255,.15);border:0;color:#fff;border-radius:10px;padding:6px 10px;cursor:pointer}
+.bell b{position:absolute;top:-6px;right:-6px;background:#dc2626;color:#fff;border-radius:99px;font-size:11px;padding:0 6px}
+nav{display:flex;gap:4px;overflow-x:auto;padding:8px 14px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:58px;z-index:19}
+nav button{border:0;background:none;padding:8px 14px;border-radius:10px;cursor:pointer;white-space:nowrap;color:var(--mute);font-weight:500}
+nav button i{font-style:normal;margin-right:5px}
+nav button.on{background:var(--soft);color:var(--brand);font-weight:700}
+main{max-width:1180px;margin:0 auto;padding:18px 14px 60px}
+h2{margin:4px 0 14px;font-size:20px}
+h3{margin:18px 0 10px;font-size:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:14px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.kpi .l{color:var(--mute);font-size:13px}.kpi .v{font-size:24px;font-weight:700;margin-top:2px}
+.kpi.gold{background:var(--soft);border-color:#bfdbfe}.kpi.gold .v{color:var(--brand)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sp{flex:1}
+.btn{border:1px solid var(--line);background:#fff;padding:8px 14px;border-radius:10px;cursor:pointer;font-weight:600}
+.btn:hover{background:#f5f8fd}
+.btn.p{background:var(--brand);border-color:var(--brand);color:#fff}.btn.p:hover{background:#1e40af}
+.btn.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.btn.bad{color:var(--bad);border-color:#f3c4c4}
+.btn.sm{padding:4px 10px;font-size:13px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+table{width:100%;border-collapse:collapse;background:#fff}
+th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;font-size:14px}
+th{background:#eef3fb;font-weight:600;color:#1e3a8a;white-space:nowrap}
+td.n,th.n{text-align:right;white-space:nowrap}
+tr.click{cursor:pointer}tr.click:hover td{background:#f5f9ff}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r)}
+.tw table{border:0}
+.st{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:600;white-space:nowrap}
+.st-SCHEDULED{background:#fef3c7;color:#92400e}.st-RECEIVED{background:#dbeafe;color:#1e40af}
+.st-RETURNED{background:#fee2e2;color:#991b1b}.st-VERIFIED{background:#ede9fe;color:#5b21b6}
+.st-PAID{background:#dcfce7;color:#166534}.st-CANCELLED{background:#e5e7eb;color:#4b5563}
+.mute{color:var(--mute)}.small{font-size:13px}
+.empty{padding:28px;text-align:center;color:var(--mute);background:#fff;border:1px dashed var(--line);border-radius:var(--r)}
+/* order card */
+.oc{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:14px;border-left:5px solid var(--brand2)}
+.oc.late{border-left-color:var(--bad)}
+.oc h4{margin:0 0 4px;font-size:16px}
+.oc .meta{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;font-size:14px;margin:8px 0}
+.oc .meta span:nth-child(odd){color:var(--mute)}
+.money{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.money div{background:var(--soft);border-radius:10px;padding:6px 10px;font-size:13px}
+.money b{display:block;font-size:16px;color:var(--brand)}
+/* forms */
+label{display:block;font-size:13px;color:#4b4b4b;margin-bottom:4px;font-weight:500}
+input,select,textarea{width:100%;padding:9px 11px;border:1px solid #cbd5e1;border-radius:10px;background:#fff}
+input:focus,select:focus,textarea:focus{outline:2px solid #93c5fd;border-color:#3b82f6}
+.f{margin-bottom:12px}.f2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:560px){.f2{grid-template-columns:1fr}}
+.calc{background:var(--soft);border-radius:10px;padding:10px 12px;font-size:14px;display:flex;gap:16px;flex-wrap:wrap}
+/* modal */
+.ov{position:fixed;inset:0;background:rgba(30,20,5,.5);display:flex;align-items:flex-start;justify-content:center;padding:30px 12px;z-index:50;overflow-y:auto}
+.md{background:#fff;border-radius:18px;width:100%;max-width:640px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.md.wide{max-width:860px}
+.md .mh{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
+.md .mh h3{margin:0;flex:1}
+.md .mb{padding:16px 18px}
+.md .mf{padding:12px 18px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.x{border:0;background:none;font-size:22px;cursor:pointer;color:var(--mute)}
+.pop .mh{background:linear-gradient(135deg,#1d4ed8,#3b82f6);color:#fff;border-radius:18px 18px 0 0}
+.pop .mh .x{color:#fff}
+/* photos */
+.ph{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
+.ph a,.ph div{display:block;aspect-ratio:1;border-radius:10px;overflow:hidden;background:#eee;position:relative}
+.ph img{width:100%;height:100%;object-fit:cover}
+.ph span{position:absolute;left:4px;bottom:4px;background:rgba(0,0,0,.6);color:#fff;font-size:11px;padding:1px 6px;border-radius:6px}
+.drop{border:2px dashed #93c5fd;border-radius:12px;padding:14px;text-align:center;background:#f8fbff;cursor:pointer}
+/* timeline */
+.tl{border-left:2px solid var(--line);margin-left:6px;padding-left:14px}
+.tl div{position:relative;margin-bottom:10px;font-size:14px}
+.tl div:before{content:'';position:absolute;left:-20px;top:6px;width:10px;height:10px;border-radius:50%;background:var(--brand2)}
+.tl div.off:before{background:#d4d4d4}.tl div.off{color:#a3a3a3}
+/* login */
+.login{max-width:400px;margin:60px auto;padding:0 14px}
+.login .card{padding:26px}
+.logo{width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#1d4ed8,#60a5fa);display:grid;place-items:center;font-size:28px;margin-bottom:12px}
+.demo{margin-top:18px;padding-top:16px;border-top:1px dashed var(--line)}
+.demo .row button{flex:1}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1f2328;color:#fff;padding:10px 18px;border-radius:12px;z-index:99;font-size:14px;max-width:90vw}
+.toast.err{background:var(--bad)}
+.banner{background:#e0f2fe;border:1px solid #7dd3fc;color:#075985;padding:8px 14px;font-size:13px;text-align:center}
+.bar{height:10px;background:#e2e8f0;border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:var(--brand2)}
+.pw{position:relative}.pw input{padding-right:44px}
+.pw button{position:absolute;right:4px;top:50%;transform:translateY(-50%);border:0;background:none;cursor:pointer;font-size:16px;padding:6px}
+.hint{font-size:12px;color:var(--mute);margin-top:4px}
+.oprow{font-size:11px;opacity:.85}.oprow a{color:#bfdbfe}
+.cred{background:#eff6ff;border:1px dashed #93c5fd;border-radius:12px;padding:14px;font-size:17px;line-height:1.9}
+.cred b{font-family:ui-monospace,monospace;font-size:18px;color:#1e3a8a}
+@media(max-width:720px){
+  body{padding-bottom:70px}
+  header{padding:10px 12px;gap:8px}
+  header .t{font-size:15px}header .t small{font-size:11px}
+  .who{font-size:12px;max-width:45vw}
+  nav{position:fixed;top:auto;bottom:0;left:0;right:0;border-top:1px solid var(--line);border-bottom:0;
+    padding:4px 4px calc(4px + env(safe-area-inset-bottom));box-shadow:0 -4px 16px rgba(15,23,42,.08)}
+  nav button{display:flex;flex-direction:column;align-items:center;font-size:11px;padding:5px 6px;min-width:66px;flex:1;line-height:1.3}
+  nav button i{font-size:20px;margin:0}
+  main{padding:14px 10px 90px}
+  h2{font-size:18px}h3{font-size:15px}
+  .kpis{grid-template-columns:1fr 1fr;gap:8px}.kpi{padding:10px 12px}.kpi .v{font-size:19px}
+  .g2{grid-template-columns:1fr}
+  input,select,textarea{font-size:16px}
+  .ov{padding:0;align-items:stretch}
+  .md,.md.wide{border-radius:0;min-height:100%;max-width:none;display:flex;flex-direction:column}
+  .md .mb{flex:1}.md .mh{position:sticky;top:0;background:#fff;z-index:2}
+  .pop .mh{border-radius:0;background:linear-gradient(135deg,#1d4ed8,#3b82f6)}
+  .md .mf{position:sticky;bottom:0;background:#fff;padding-bottom:calc(12px + env(safe-area-inset-bottom))}
+  .md .mf .btn{flex:1 1 40%}.md .mf .sp{display:none}
+  .oc .row .btn{flex:1}
+  .tw{border:0;background:none;overflow:visible}
+  table.rt,table.rt tbody,table.rt tr,table.rt td{display:block;width:100%}
+  table.rt thead{display:none}table.rt{background:none}
+  table.rt tr{background:#fff;border:1px solid var(--line);border-radius:12px;margin-bottom:8px;padding:8px 12px}
+  table.rt td{border:0;padding:3px 0;display:flex;gap:12px;justify-content:space-between;align-items:center;text-align:right!important;max-width:none!important}
+  table.rt td::before{content:attr(data-l);color:var(--mute);font-size:12px;text-align:left;flex-shrink:0}
+  table.rt td[data-l=""]::before{display:none}table.rt td[data-l=""]{justify-content:flex-end}
+  table.rt td .bar{flex:1;max-width:60%}
+  table.rt td:first-child{font-weight:600;border-bottom:1px solid var(--line);padding-bottom:6px;margin-bottom:2px}
+  .row>select,.row>input[type=month]{flex:1}
+}
+@media print{header,nav,.noprint,.banner{display:none!important}main{padding:0}body{background:#fff}}
+</style>
+</head>
+<body>
+<div id="demoBanner" class="banner hidden">โหมดสาธิต — ข้อมูลตัวอย่าง รีเฟรชแล้วหาย · ใส่ API_URL ของ Apps Script เพื่อใช้งานจริง</div>
+
+<!-- LOGIN -->
+<section id="loginView" class="login">
+  <div class="card">
+    <div class="logo">🍱</div>
+    <h2 style="margin:0">แจ้งเตือนข้าวกล่องคณะเยี่ยมชม</h2>
+    <p class="mute small" style="margin:4px 0 18px">สำนักงานสนับสนุนมูลนิธิและโครงการ</p>
+    <form id="loginForm">
+      <div class="f"><label>ชื่อผู้ใช้ (บัญชีของทีม)</label><input id="lgUser" autocomplete="username" autocapitalize="none" required></div>
+      <div class="f"><label>รหัสผ่าน</label><div class="pw"><input id="lgPass" type="password" autocomplete="current-password" required><button type="button" data-eye="lgPass">👁</button></div></div>
+      <div class="f"><label>ชื่อผู้ปฏิบัติงาน *</label><input id="lgOp" placeholder="ชื่อ-สกุล ของผู้ที่ใช้งานอยู่ตอนนี้" required maxlength="60">
+        <div class="hint">บัญชีใช้ร่วมกันทั้งทีม — ชื่อนี้จะถูกบันทึกเป็น "ผู้บันทึก" ในทุกรายการและ Log</div></div>
+      <button class="btn p" style="width:100%">เข้าสู่ระบบ</button>
+    </form>
+    <div id="demoLogin" class="demo hidden">
+      <div class="small mute" style="margin-bottom:8px">ทดลองเข้าใช้ในบทบาท (รหัส: admin1234 / khon1234 / finance1234)</div>
+      <div class="row">
+        <button class="btn" data-demo="admin">ADMIN</button>
+        <button class="btn" data-demo="khon">อาคารโขน</button>
+        <button class="btn" data-demo="finance">การเงิน</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- APP -->
+<section id="appView" class="hidden">
+  <header>
+    <div class="t">🍱 ข้าวกล่องคณะเยี่ยมชม<small id="hdDate"></small></div>
+    <button class="bell" id="bellBtn" title="รายการวันนี้">🔔<b id="bellN" class="hidden">0</b></button>
+    <div class="who"><div id="hdName" style="font-weight:600"></div><span id="hdRole" class="badge"></span>
+      <div class="oprow"><a href="#" id="opBtn">เปลี่ยนผู้ปฏิบัติงาน</a> · <a href="#" id="logoutBtn">ออก</a></div></div>
+  </header>
+  <nav id="tabs"></nav>
+  <main id="page"></main>
+</section>
+
+<div id="modalRoot"></div>
+
+<script>
+/* ======================== CONFIG ======================== */
+const API_URL = 'https://script.google.com/macros/s/AKfycbwoCrtMur_gr-8oWh4yhE6mL7w0ZQA0DaahZ04sl7wvkYI6jWumFs0FZdtqx3S3WNGW/exec';   // ← ใส่ URL Web App ของ Google Apps Script (ลงท้าย /exec) | ว่าง = โหมดสาธิต
+
+/* ======================== HELPERS ======================== */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad = n => String(n).padStart(2, '0');
+const ymd = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const today = () => ymd(new Date());
+const addDays = (n) => { const d = new Date(); d.setDate(d.getDate()+n); return ymd(d); };
+const nowLocal = () => { const d = new Date(); return `${ymd(d)}T${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+const toD = s => new Date(String(s).length === 10 ? s + 'T00:00:00' : s);
+const thDate = s => s ? toD(s).toLocaleDateString('th-TH', {day:'numeric', month:'short', year:'numeric'}) : '-';
+const thDateLong = s => s ? toD(s).toLocaleDateString('th-TH', {weekday:'long', day:'numeric', month:'long', year:'numeric'}) : '-';
+const thDT = s => s ? toD(s).toLocaleString('th-TH', {day:'numeric', month:'short', year:'2-digit', hour:'2-digit', minute:'2-digit'}) + ' น.' : '-';
+const thMonth = m => toD(m + '-01').toLocaleDateString('th-TH', {month:'long', year:'numeric'});
+const baht = n => Number(n || 0).toLocaleString('th-TH', {minimumFractionDigits:2, maximumFractionDigits:2});
+const num = n => Number(n || 0).toLocaleString('th-TH');
+
+const ROLE = {ADMIN:'ทีม ADMIN', KHON:'ทีมอาคารโขน', FINANCE:'ทีมการเงิน'};
+const STATUS = {SCHEDULED:'รอส่งมอบ', RECEIVED:'ตรวจรับแล้ว · รอการเงิน', RETURNED:'การเงินส่งกลับแก้ไข',
+  VERIFIED:'ตรวจสอบแล้ว · รอจ่าย', PAID:'จ่ายเงินแล้ว', CANCELLED:'ยกเลิก'};
+const CAN = {
+  ADMIN:   {create:1, receive:1, verify:1, pay:1, money:1},
+  KHON:    {receive:1},
+  FINANCE: {verify:1, pay:1, money:1}
+};
+const TABS = {
+  ADMIN:   [['today','วันนี้'],['orders','รายการ'],['receive','ตรวจรับ'],['finance','ตรวจ/จ่าย'],['summary','สรุป'],['vendors','ร้านค้า'],['users','บัญชี'],['logs','Log']],
+  KHON:    [['today','วันนี้'],['receive','ตรวจรับ'],['orders','ตารางส่ง'],['summary','สรุป']],
+  FINANCE: [['today','วันนี้'],['finance','ตรวจ/จ่าย'],['orders','รายการ'],['summary','สรุป']]
+};
+const ICON = {today:'📅', orders:'📋', receive:'📷', finance:'💰', summary:'📊', vendors:'🏪', users:'👥', logs:'🕘'};
+const S = {token:null, user:null, orders:[], vendors:[], tab:'today', month:today().slice(0,7), status:'ALL'};
+const can = k => !!(CAN[S.user?.role] || {})[k];
+const st = s => `<span class="st st-${s}">${STATUS[s] || s}</span>`;
+const billBoxes = o => (o.received_boxes !== '' && o.received_boxes != null) ? Number(o.received_boxes) : Number(o.boxes || 0);
+
+function toast(msg, err) {
+  const t = document.createElement('div'); t.className = 'toast' + (err ? ' err' : ''); t.textContent = msg;
+  document.body.appendChild(t); setTimeout(() => t.remove(), err ? 4500 : 2500);
+}
+const store = {
+  get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
+  set(k,v){ try { localStorage.setItem(k,v); } catch(e){} },
+  del(k){ try { localStorage.removeItem(k); } catch(e){} }
+};
+
+/* ======================== API ======================== */
+async function api(action, payload = {}) {
+  if (!API_URL) return Mock.handle(action, payload);
+  const r = await fetch(API_URL, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body: JSON.stringify({action, token:S.token, payload})});
+  const j = await r.json();
+  if (!j.ok) {
+    if (j.error === 'SESSION_EXPIRED') { logout(true); throw new Error('หมดเวลาใช้งาน กรุณาเข้าสู่ระบบใหม่'); }
+    throw new Error(j.error);
+  }
+  return j.data;
+}
+async function run(fn, btn) {
+  if (btn) { btn.disabled = true; btn.dataset.t = btn.textContent; btn.textContent = 'กำลังบันทึก…'; }
+  try { return await fn(); } catch (e) { toast(e.message, true); throw e; }
+  finally { if (btn) { btn.disabled = false; btn.textContent = btn.dataset.t; } }
+}
+
+/* ======================== MOCK (โหมดสาธิต) ======================== */
+const Mock = (() => {
+  const MONEY = ['price_per_box','foundation_per_box','total_amount','foundation_amount','vendor_amount','pay_ref','paid_by'];
+  const OPEN = ['SCHEDULED','RECEIVED','RETURNED','VERIFIED'];
+  let seq = 1001, me = null;
+  const ts = () => { const d = new Date(); return `${ymd(d)}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`; };
+  const who = u => `${u.operator} [${u.username}]`;
+  const users = [
+    {username:'admin', password:'admin1234', display_name:'ทีม ADMIN', role:'ADMIN', email:'admin@example.org', active:true, updated_at:''},
+    {username:'khon', password:'khon1234', display_name:'ทีมอาคารโขน', role:'KHON', email:'khon@example.org', active:true, updated_at:''},
+    {username:'finance', password:'finance1234', display_name:'ทีมการเงิน', role:'FINANCE', email:'finance@example.org', active:true, updated_at:''}
+  ];
+  const ver = {admin:1, khon:1, finance:1};
+  const vendors = [
+    {id:'V001', name:'ร้านครัวคุณแม่', contact:'คุณสมศรี', phone:'081-234-5678', default_price:80, default_foundation:10, bank_info:'กสิกรไทย xxx-x-x1234-x', active:true},
+    {id:'V002', name:'ร้านบ้านข้าวหอม', contact:'คุณประยูร', phone:'089-111-2222', default_price:90, default_foundation:15, bank_info:'กรุงไทย xxx-x-x5678-x', active:true},
+    {id:'V003', name:'ร้านอิ่มดี', contact:'คุณนิด', phone:'086-333-4444', default_price:75, default_foundation:10, bank_info:'ไทยพาณิชย์ xxx-x-x9012-x', active:true}
+  ];
+  const orders = [], photos = [], logs = [];
+  const demoImg = (t) => 'data:image/svg+xml;utf8,' + encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><rect width="400" height="400" fill="#dbeafe"/><text x="200" y="190" font-size="90" text-anchor="middle">🍱</text><text x="200" y="260" font-size="22" text-anchor="middle" fill="#1d4ed8" font-family="sans-serif">${t}</text></svg>`);
+  const calc = o => { const b = billBoxes(o); o.total_amount = b*o.price_per_box; o.foundation_amount = b*o.foundation_per_box; o.vendor_amount = o.total_amount - o.foundation_amount; };
+  const log = (u, action, id, detail) => logs.push({timestamp:ts(), username:u.username, operator:u.operator, display_name:u.display_name, role:u.role, action, order_id:id||'', detail: typeof detail === 'string' ? detail : JSON.stringify(detail)});
+  const view = o => { const x = {...o}; if (me.role === 'KHON') MONEY.forEach(k => delete x[k]); return x; };
+  const must = id => { const o = orders.find(x => x.id === id); if (!o) throw new Error('ไม่พบรายการ'); return o; };
+
+  // ข้อมูลตัวอย่าง
+  const A = {...users[0], operator:'สมชาย ใจดี'}, K = {...users[1], operator:'วิภา รักงาน'}, F = {...users[2], operator:'กมล ละเอียด'};
+  const seed = [
+    [-12,'คณะครูโรงเรียนบ้านหนองบัว','V001',45,'ข้าวกะเพราไก่ไข่ดาว + น้ำดื่ม','PAID'],
+    [-9,'คณะนักศึกษามหาวิทยาลัยราชภัฏ','V002',60,'ข้าวผัดปู + ผลไม้','PAID'],
+    [-7,'คณะผู้สูงอายุ อบต.ท่าข้าม','V003',30,'ข้าวต้มปลา + ขนมไทย','VERIFIED'],
+    [-5,'คณะข้าราชการกรมศิลปากร','V001',25,'ข้าวหมูกระเทียม + น้ำผลไม้','RECEIVED'],
+    [-3,'คณะนักเรียน ร.ร.วัดสุทธิ','V003',80,'ข้าวไข่เจียวหมูสับ + นม','RETURNED'],
+    [-1,'คณะอาสาสมัครสาธารณสุข','V002',40,'ข้าวมันไก่ + ซุป','RECEIVED'],
+    [0,'คณะนักเรียนโรงเรียนสตรีวิทยา','V001',120,'ข้าวผัดกะเพราหมู + ไข่ต้ม + น้ำดื่ม','SCHEDULED','11:30'],
+    [0,'คณะผู้บริหารสถานทูต (VIP)','V002',18,'ข้าวหน้าเป็ด + ต้มยำกุ้ง + ผลไม้','SCHEDULED','12:00'],
+    [2,'คณะชมรมผู้สูงอายุเขตดุสิต','V003',50,'ข้าวราดแกงเขียวหวาน + ขนม','SCHEDULED'],
+    [5,'คณะนักศึกษาต่างชาติ','V001',35,'ข้าวผัดอเมริกัน + น้ำดื่ม','SCHEDULED'],
+    [9,'คณะครูศูนย์การศึกษานอกระบบ','V002',70,'ข้าวหมูแดง + ซุป','SCHEDULED']
+  ];
+  seed.forEach(([d, g, vid, boxes, menu, status, time]) => {
+    const v = vendors.find(x => x.id === vid);
+    const o = {id:'LB' + (seq++), service_date:addDays(d), service_time:time || '11:30', group_name:g, group_size:boxes,
+      vendor_id:vid, vendor_name:v.name, menu, boxes, price_per_box:v.default_price, foundation_per_box:v.default_foundation,
+      note:'', status:'SCHEDULED', received_at:'', received_boxes:'', receive_note:'', received_by:'', received_saved_at:'',
+      verified_at:'', verified_by:'', verify_note:'', paid_at:'', paid_by:'', pay_ref:'', cancel_reason:'',
+      created_at:addDays(d-7) + 'T09:00:00', created_by:who(A)};
+    calc(o); orders.push(o); log(A, 'สร้างรายการ', o.id, {group:g, boxes});
+    if (status !== 'SCHEDULED') {
+      photos.push({id:'PH'+(seq++), order_id:o.id, kind:'delivery', url:demoImg('รูปส่งมอบ'), file_name:'demo.jpg', uploaded_at:o.service_date+'T11:20:00', uploaded_by:who(K)});
+      const rb = status === 'RETURNED' ? boxes - 2 : boxes;
+      Object.assign(o, {status:'RECEIVED', received_at:o.service_date + 'T11:15', received_boxes:rb, received_by:who(K), received_saved_at:o.service_date + 'T11:22:00'});
+      calc(o); log(K, 'ตรวจรับข้าวกล่อง', o.id, {received:rb});
+    }
+    if (status === 'RETURNED') { o.status = 'RETURNED'; o.verify_note = 'จำนวนกล่องไม่ตรงกับใบส่งของ (ใบส่งของ 80 กล่อง) กรุณาตรวจสอบและแนบรูปใบส่งของเพิ่ม'; log(F, 'การเงินส่งกลับแก้ไข', o.id, {note:o.verify_note}); }
+    if (status === 'VERIFIED' || status === 'PAID') { Object.assign(o, {status:'VERIFIED', verified_at:o.service_date + 'T15:00:00', verified_by:who(F)}); log(F, 'การเงินตรวจสอบผ่าน', o.id, ''); }
+    if (status === 'PAID') { Object.assign(o, {status:'PAID', paid_at:addDays(d+3), paid_by:who(F), pay_ref:'PV-' + (seq++)}); log(F, 'บันทึกจ่ายเงิน', o.id, ''); }
+  });
+
+  const R = {
+    login(p) {
+      const u = users.find(x => x.username === String(p.username).trim().toLowerCase() && x.active);
+      if (!String(p.operator || '').trim()) throw new Error('กรุณากรอกชื่อผู้ปฏิบัติงาน');
+      if (!u || String(p.password) !== u.password) throw new Error('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
+      me = {username:u.username, display_name:u.display_name, role:u.role, operator:String(p.operator).trim(), ver:ver[u.username]}; log(me, 'เข้าสู่ระบบ', '', '');
+      return {token:'demo-' + u.username, user:me};
+    },
+    bootstrap(p) { return {user:me, vendors:vendors.map(v => { const x = {...v}; if (me.role === 'KHON') delete x.bank_info; return x; }), orders:R.listOrders(p)}; },
+    listOrders(p) {
+      const m = p.month || today().slice(0,7), td = today();
+      return orders.filter(o => o.service_date.startsWith(m) || OPEN.includes(o.status) || o.service_date === td)
+        .sort((a,b) => (a.service_date + a.service_time).localeCompare(b.service_date + b.service_time)).map(view);
+    },
+    saveOrder(p) {
+      if (me.role !== 'ADMIN') throw new Error('สิทธิ์ไม่พอ');
+      if (!p.group_name || !p.service_date || !p.vendor_id || !(Number(p.boxes) > 0)) throw new Error('กรุณากรอก วันที่ / ชื่อคณะ / ร้าน / จำนวนกล่อง ให้ครบ');
+      const v = vendors.find(x => x.id === p.vendor_id);
+      const keys = ['service_date','service_time','group_name','group_size','vendor_id','menu','boxes','price_per_box','foundation_per_box','note'];
+      ['boxes','group_size','price_per_box','foundation_per_box'].forEach(k => p[k] = Number(p[k] || 0));
+      if (p.id) {
+        const o = must(p.id); if (['PAID','CANCELLED'].includes(o.status)) throw new Error('แก้ไขไม่ได้');
+        const diff = {}; keys.forEach(k => { if (String(p[k]) !== String(o[k])) { diff[k] = [o[k], p[k]]; o[k] = p[k]; } });
+        o.vendor_name = v.name; o.updated_at = ts(); o.updated_by = who(me); calc(o); log(me, 'แก้ไขรายการ', o.id, diff); return view(o);
+      }
+      const o = {id:'LB' + (seq++), status:'SCHEDULED', received_boxes:'', created_at:ts(), created_by:who(me)};
+      keys.forEach(k => o[k] = p[k]); o.vendor_name = v.name; calc(o); orders.push(o);
+      log(me, 'สร้างรายการ', o.id, {group:o.group_name, date:o.service_date, boxes:o.boxes}); return view(o);
+    },
+    cancelOrder(p) { const o = must(p.id); if (!p.reason) throw new Error('กรุณาระบุเหตุผล'); const f = o.status; o.status = 'CANCELLED'; o.cancel_reason = p.reason; log(me, 'ยกเลิกรายการ', o.id, {from:f, reason:p.reason}); return view(o); },
+    uploadPhoto(p) {
+      const o = must(p.order_id);
+      if (p.kind !== 'payment' && me.role === 'FINANCE') throw new Error('ทีมการเงินแนบได้เฉพาะหลักฐานการจ่าย');
+      const x = {id:'PH' + (seq++), order_id:o.id, kind:p.kind || 'delivery', url:'data:' + p.mime + ';base64,' + p.data, file_name:p.name, uploaded_at:ts(), uploaded_by:who(me)};
+      photos.push(x); log(me, x.kind === 'payment' ? 'แนบหลักฐานการจ่าย' : 'แนบรูปส่งมอบ', o.id, {file:p.name}); return x;
+    },
+    listPhotos(p) { return photos.filter(x => x.order_id === p.order_id); },
+    receiveOrder(p) {
+      const o = must(p.id); if (!['SCHEDULED','RETURNED'].includes(o.status)) throw new Error('รายการนี้ตรวจรับไปแล้ว');
+      if (!p.received_at) throw new Error('กรุณาระบุวันที่และเวลาส่งมอบ');
+      if (!photos.some(x => x.order_id === o.id && x.kind === 'delivery')) throw new Error('กรุณาแนบรูปถ่ายหลักฐานอย่างน้อย 1 รูป');
+      const f = o.status;
+      Object.assign(o, {status:'RECEIVED', received_at:p.received_at, received_boxes:Number(p.received_boxes), receive_note:p.receive_note || '', received_by:who(me), received_saved_at:ts()});
+      calc(o); log(me, f === 'RETURNED' ? 'ตรวจรับ (แก้ไขตามที่การเงินส่งกลับ)' : 'ตรวจรับข้าวกล่อง', o.id, {received_at:p.received_at, ordered:o.boxes, received:o.received_boxes, note:p.receive_note || ''});
+      return view(o);
+    },
+    verifyOrder(p) { const o = must(p.id); if (o.status !== 'RECEIVED') throw new Error('สถานะไม่ถูกต้อง'); Object.assign(o, {status:'VERIFIED', verified_at:ts(), verified_by:who(me), verify_note:p.note || ''}); log(me, 'การเงินตรวจสอบผ่าน', o.id, {total:o.total_amount}); return view(o); },
+    returnOrder(p) { const o = must(p.id); if (!p.note) throw new Error('กรุณาระบุสิ่งที่ต้องแก้ไข'); Object.assign(o, {status:'RETURNED', verify_note:p.note}); log(me, 'การเงินส่งกลับแก้ไข', o.id, {note:p.note}); return view(o); },
+    payOrder(p) { const o = must(p.id); if (o.status !== 'VERIFIED') throw new Error('สถานะไม่ถูกต้อง'); if (!p.paid_at) throw new Error('กรุณาระบุวันที่จ่าย'); Object.assign(o, {status:'PAID', paid_at:p.paid_at, pay_ref:p.pay_ref || '', paid_by:who(me)}); log(me, 'บันทึกจ่ายเงิน', o.id, {paid_at:p.paid_at, ref:p.pay_ref}); return view(o); },
+    listLogs(p) { let r = logs; if (p.order_id) r = r.filter(x => x.order_id === p.order_id); else if (me.role !== 'ADMIN') throw new Error('สิทธิ์ไม่พอ'); return r.slice(-300).reverse(); },
+    saveVendor(p) {
+      if (p.id) { const v = vendors.find(x => x.id === p.id); Object.assign(v, p); log(me, 'แก้ไขร้านค้า', '', {name:v.name}); return v; }
+      const v = {...p, id:'V' + (seq++)}; vendors.push(v); log(me, 'เพิ่มร้านค้า', '', {name:v.name}); return v;
+    },
+    listUsers() { return users.map(u => { const x = {...u}; delete x.password; return x; }); },
+    saveUser(p) {
+      if (p.password && p.password.length < 6) throw new Error('รหัสผ่านอย่างน้อย 6 ตัวอักษร');
+      let u = users.find(x => x.username === p.username);
+      if (u) { if (u.username === me.username && (p.role !== 'ADMIN' || !p.active)) throw new Error('ห้ามลดสิทธิ์/ปิดบัญชีที่กำลังใช้อยู่');
+        Object.assign(u, {display_name:p.display_name, role:p.role, email:p.email, active:p.active, updated_at:ts()});
+        if (p.password) { u.password = p.password; ver[u.username]++; }
+        log(me, 'แก้ไขบัญชี', '', {username:u.username, password_changed:!!p.password}); }
+      else { if (!p.password) throw new Error('บัญชีใหม่ต้องตั้งรหัสผ่าน');
+        u = {username:p.username, password:p.password, display_name:p.display_name, role:p.role, email:p.email, active:p.active, updated_at:ts()}; ver[u.username] = 1; users.push(u); log(me, 'เพิ่มบัญชี', '', {username:u.username}); }
+      const x = {...u}; delete x.password; return x;
+    },
+    forceLogout(p) { ver[p.username]++; log(me, 'บังคับออกจากระบบทุกเครื่อง', '', {username:p.username}); return true; },
+    setOperator(p) { const o = String(p.operator || '').trim(); if (!o) throw new Error('กรุณากรอกชื่อผู้ปฏิบัติงาน'); log(me, 'เปลี่ยนผู้ปฏิบัติงาน', '', {from:me.operator, to:o}); me.operator = o; return me; }
+  };
+  return { handle: async (a, p) => { await new Promise(r => setTimeout(r, 150)); if (!R[a]) throw new Error('ไม่รู้จักคำสั่ง ' + a); return JSON.parse(JSON.stringify(R[a](p))); } };
+})();
+
+/* ======================== AUTH ======================== */
+async function login(username, password, operator) {
+  const d = await api('login', {username, password, operator});
+  store.set('lb_operator', operator);
+  S.token = d.token; S.user = d.user;
+  if (API_URL) store.set('lb_session', JSON.stringify(d));
+  await boot();
+}
+function logout(silent) {
+  S.token = null; S.user = null; store.del('lb_session');
+  $('#appView').classList.add('hidden'); $('#loginView').classList.remove('hidden'); closeModal();
+  if (!silent) toast('ออกจากระบบแล้ว');
+}
+async function boot() {
+  const d = await api('bootstrap', {month:S.month});
+  S.user = d.user; S.vendors = d.vendors; S.orders = d.orders;
+  $('#loginView').classList.add('hidden'); $('#appView').classList.remove('hidden');
+  $('#hdName').textContent = S.user.operator;
+  $('#hdRole').textContent = ROLE[S.user.role] + ' · ' + S.user.username; $('#hdRole').className = 'badge role-' + S.user.role;
+  $('#hdDate').textContent = thDateLong(today());
+  S.tab = 'today'; renderTabs(); render();
+  const key = 'lb_pop_' + S.user.username + '_' + today();
+  if (todays().length && !store.get(key)) showTodayPopup();
+}
+async function reload() { S.orders = await api('listOrders', {month:S.month}); render(); }
+
+/* ======================== DATA VIEWS ======================== */
+const todays = () => S.orders.filter(o => o.service_date === today() && o.status !== 'CANCELLED');
+const inMonth = () => S.orders.filter(o => o.service_date.startsWith(S.month));
+const byId = id => S.orders.find(o => o.id === id);
+
+/* ======================== RENDER ======================== */
+function renderTabs() {
+  $('#tabs').innerHTML = TABS[S.user.role].map(([k, t]) => {
+    let n = '';
+    if (k === 'receive') { const c = S.orders.filter(o => ['SCHEDULED','RETURNED'].includes(o.status) && o.service_date <= today()).length; if (c) n = ` (${c})`; }
+    if (k === 'finance') { const c = S.orders.filter(o => o.status === 'RECEIVED').length; if (c) n = ` (${c})`; }
+    return `<button data-tab="${k}" class="${S.tab === k ? 'on' : ''}"><i>${ICON[k]}</i>${t}${n}</button>`;
+  }).join('');
+  const t = todays().filter(o => o.status === 'SCHEDULED').length;
+  $('#bellN').textContent = todays().length; $('#bellN').classList.toggle('hidden', !todays().length);
+}
+function render() {
+  renderTabs();
+  const P = {today:pToday, orders:pOrders, receive:pReceive, finance:pFinance, summary:pSummary, vendors:pVendors, users:pUsers, logs:pLogs};
+  P[S.tab]();
+}
+
+function orderCard(o, opts = {}) {
+  const late = ['SCHEDULED','RETURNED'].includes(o.status) && o.service_date < today();
+  const money = can('money') ? `<div class="money">
+      <div>ยอดเงิน<b>${baht(o.total_amount)}</b></div>
+      <div>มูลนิธิได้<b>${baht(o.foundation_amount)}</b></div>
+      <div>จ่ายร้าน<b>${baht(o.vendor_amount)}</b></div></div>` : '';
+  const btns = [];
+  if (can('receive') && ['SCHEDULED','RETURNED'].includes(o.status)) btns.push(`<button class="btn p sm" data-act="receive" data-id="${o.id}">📷 ตรวจรับ</button>`);
+  if (can('verify') && o.status === 'RECEIVED') btns.push(`<button class="btn p sm" data-act="detail" data-id="${o.id}">ตรวจสอบ</button>`);
+  if (can('pay') && o.status === 'VERIFIED') btns.push(`<button class="btn ok sm" data-act="pay" data-id="${o.id}">บันทึกจ่าย</button>`);
+  btns.push(`<button class="btn sm" data-act="detail" data-id="${o.id}">รายละเอียด</button>`);
+  return `<div class="oc ${late ? 'late' : ''}">
+    <div class="row"><h4 class="sp">${esc(o.group_name)}</h4>${st(o.status)}</div>
+    <div class="small mute">${opts.date ? thDate(o.service_date) + ' · ' : ''}เวลา ${esc(o.service_time)} น. · ${esc(o.id)}${late ? ' · <b style="color:var(--bad)">เลยกำหนดยังไม่ตรวจรับ</b>' : ''}</div>
+    <div class="meta"><span>ร้าน</span><span><b>${esc(o.vendor_name)}</b></span>
+      <span>จำนวน</span><span><b>${num(o.boxes)}</b> กล่อง${o.received_boxes !== '' && o.received_boxes != null && Number(o.received_boxes) !== Number(o.boxes) ? ` <span style="color:var(--bad)">(รับจริง ${num(o.received_boxes)})</span>` : ''}</span>
+      <span>เมนู</span><span>${esc(o.menu)}</span>
+      ${o.received_at ? `<span>ส่งมอบ</span><span>${thDT(o.received_at)} · ${esc(o.received_by)}</span>` : ''}
+      ${o.status === 'RETURNED' ? `<span style="color:var(--bad)">ต้องแก้</span><span style="color:var(--bad)">${esc(o.verify_note)}</span>` : ''}
+    </div>${money}
+    <div class="row" style="margin-top:10px;justify-content:flex-end">${btns.join('')}</div></div>`;
+}
+
+function pToday() {
+  const t = todays();
+  const r = S.user.role;
+  let extra = '';
+  if (r === 'FINANCE' || r === 'ADMIN') {
+    const pv = S.orders.filter(o => o.status === 'RECEIVED').length, pp = S.orders.filter(o => o.status === 'VERIFIED');
+    extra = `<div class="kpis">
+      <div class="kpi"><div class="l">รอการเงินตรวจสอบ</div><div class="v">${pv}</div></div>
+      <div class="kpi"><div class="l">ตรวจแล้ว รอจ่าย</div><div class="v">${pp.length}</div></div>
+      <div class="kpi gold"><div class="l">ยอดรอจ่ายร้านค้า</div><div class="v">${baht(pp.reduce((s,o) => s + Number(o.vendor_amount||0), 0))}</div></div></div>`;
+  }
+  if (r === 'KHON' || r === 'ADMIN') {
+    const late = S.orders.filter(o => ['SCHEDULED','RETURNED'].includes(o.status) && o.service_date < today());
+    if (late.length) extra += `<div class="card" style="border-color:#f3c4c4;background:#fff6f6;margin-bottom:14px">⚠️ มี <b>${late.length}</b> รายการเลยวันส่งแล้วแต่ยังไม่ได้ตรวจรับ / ต้องแก้ไข — ดูที่แท็บ <a href="#" data-goto="receive">ตรวจรับ</a></div>`;
+  }
+  const up = S.orders.filter(o => o.service_date > today() && o.service_date <= addDays(7) && o.status === 'SCHEDULED');
+  $('#page').innerHTML = `<h2>วันนี้ · ${thDateLong(today())}</h2>${extra}
+    ${t.length ? `<div class="kpis"><div class="kpi gold"><div class="l">คณะวันนี้</div><div class="v">${t.length} คณะ</div></div>
+      <div class="kpi"><div class="l">ข้าวกล่องรวม</div><div class="v">${num(t.reduce((s,o) => s + Number(o.boxes), 0))} กล่อง</div></div>
+      ${can('money') ? `<div class="kpi"><div class="l">ยอดเงินวันนี้</div><div class="v">${baht(t.reduce((s,o) => s + Number(o.total_amount||0), 0))}</div></div>
+      <div class="kpi"><div class="l">มูลนิธิได้วันนี้</div><div class="v">${baht(t.reduce((s,o) => s + Number(o.foundation_amount||0), 0))}</div></div>` : ''}</div>
+      <div class="grid g2">${t.map(o => orderCard(o)).join('')}</div>` : '<div class="empty">วันนี้ไม่มีการส่งข้าวกล่อง</div>'}
+    <h3>7 วันข้างหน้า</h3>
+    ${up.length ? `<div class="grid g2">${up.map(o => orderCard(o, {date:1})).join('')}</div>` : '<div class="empty">ยังไม่มีรายการ</div>'}`;
+}
+
+function monthBar() {
+  return `<div class="row noprint" style="margin-bottom:12px">
+    <button class="btn sm" data-mon="-1">‹</button><input type="month" id="monPick" value="${S.month}" style="width:auto">
+    <button class="btn sm" data-mon="1">›</button><b>${thMonth(S.month)}</b><span class="sp"></span></div>`;
+}
+
+function pOrders() {
+  let list = inMonth();
+  if (S.status !== 'ALL') list = list.filter(o => o.status === S.status);
+  const m = can('money');
+  $('#page').innerHTML = `<div class="row"><h2 class="sp">${S.user.role === 'KHON' ? 'ตารางส่งข้าวกล่อง' : 'รายการทั้งหมด'}</h2>
+      ${can('create') ? '<button class="btn p" data-act="new">+ เพิ่มรายการคณะ</button>' : ''}</div>
+    ${monthBar()}
+    <div class="row" style="margin-bottom:12px"><select id="stFilter" style="width:auto">
+      <option value="ALL">ทุกสถานะ</option>${Object.entries(STATUS).map(([k,v]) => `<option value="${k}" ${S.status === k ? 'selected' : ''}>${v}</option>`).join('')}</select>
+      <span class="mute small">${list.length} รายการ</span></div>
+    ${list.length ? `<div class="tw"><table><thead><tr><th>วันที่</th><th>เวลา</th><th>คณะ</th><th>ร้าน</th><th>เมนู</th><th class="n">กล่อง</th>
+      ${m ? '<th class="n">ยอดเงิน</th><th class="n">มูลนิธิ</th>' : ''}<th>สถานะ</th></tr></thead><tbody>
+      ${list.map(o => `<tr class="click" data-act="detail" data-id="${o.id}"><td>${thDate(o.service_date)}</td><td>${esc(o.service_time)}</td>
+        <td><b>${esc(o.group_name)}</b></td><td>${esc(o.vendor_name)}</td><td class="small">${esc(o.menu)}</td>
+        <td class="n">${num(billBoxes(o))}</td>${m ? `<td class="n">${baht(o.total_amount)}</td><td class="n">${baht(o.foundation_amount)}</td>` : ''}
+        <td>${st(o.status)}</td></tr>`).join('')}</tbody></table></div>` : '<div class="empty">ไม่มีรายการในเดือนนี้</div>'}`;
+}
+
+function pReceive() {
+  const need = S.orders.filter(o => ['SCHEDULED','RETURNED'].includes(o.status) && o.service_date <= today());
+  const ret = need.filter(o => o.status === 'RETURNED'), due = need.filter(o => o.status === 'SCHEDULED');
+  const up = S.orders.filter(o => o.status === 'SCHEDULED' && o.service_date > today()).slice(0, 10);
+  const done = S.orders.filter(o => o.received_at && o.received_at.slice(0,10) >= addDays(-7)).sort((a,b) => b.received_at.localeCompare(a.received_at));
+  $('#page').innerHTML = `<h2>ตรวจรับข้าวกล่อง</h2>
+    ${ret.length ? `<h3 style="color:var(--bad)">การเงินส่งกลับให้แก้ไข (${ret.length})</h3><div class="grid g2">${ret.map(o => orderCard(o, {date:1})).join('')}</div>` : ''}
+    <h3>ต้องตรวจรับ (${due.length})</h3>
+    ${due.length ? `<div class="grid g2">${due.map(o => orderCard(o, {date:1})).join('')}</div>` : '<div class="empty">ไม่มีรายการค้างตรวจรับ 👍</div>'}
+    <h3>กำลังจะมาถึง</h3>
+    ${up.length ? `<div class="tw"><table><thead><tr><th>วันที่</th><th>เวลา</th><th>คณะ</th><th>ร้าน</th><th class="n">กล่อง</th><th>เมนู</th></tr></thead><tbody>
+      ${up.map(o => `<tr class="click" data-act="detail" data-id="${o.id}"><td>${thDate(o.service_date)}</td><td>${esc(o.service_time)}</td><td>${esc(o.group_name)}</td><td>${esc(o.vendor_name)}</td><td class="n">${num(o.boxes)}</td><td class="small">${esc(o.menu)}</td></tr>`).join('')}
+      </tbody></table></div>` : '<div class="empty">ยังไม่มีรายการ</div>'}
+    <h3>ตรวจรับแล้ว 7 วันล่าสุด</h3>
+    ${done.length ? `<div class="tw"><table><thead><tr><th>ส่งมอบเมื่อ</th><th>คณะ</th><th class="n">รับจริง</th><th>ผู้บันทึก</th><th>สถานะ</th></tr></thead><tbody>
+      ${done.map(o => `<tr class="click" data-act="detail" data-id="${o.id}"><td>${thDT(o.received_at)}</td><td>${esc(o.group_name)}</td><td class="n">${num(o.received_boxes)}/${num(o.boxes)}</td><td class="small">${esc(o.received_by)}</td><td>${st(o.status)}</td></tr>`).join('')}
+      </tbody></table></div>` : '<div class="empty">-</div>'}`;
+}
+
+function finTable(list, kind) {
+  if (!list.length) return '<div class="empty">ไม่มีรายการ</div>';
+  return `<div class="tw"><table><thead><tr><th>วันที่ส่ง</th><th>คณะ</th><th>ร้าน</th><th class="n">สั่ง/รับจริง</th><th class="n">ยอดเงิน</th><th class="n">มูลนิธิ</th><th class="n">จ่ายร้าน</th><th>ผู้ตรวจรับ</th><th></th></tr></thead><tbody>
+    ${list.map(o => `<tr><td>${thDate(o.service_date)}</td><td><b>${esc(o.group_name)}</b><div class="small mute">${o.id}</div></td><td>${esc(o.vendor_name)}</td>
+      <td class="n">${num(o.boxes)}/${num(o.received_boxes)}${Number(o.boxes) !== Number(o.received_boxes) ? ' ⚠️' : ''}</td>
+      <td class="n">${baht(o.total_amount)}</td><td class="n">${baht(o.foundation_amount)}</td><td class="n"><b>${baht(o.vendor_amount)}</b></td>
+      <td class="small">${esc(o.received_by)}<br>${thDT(o.received_at)}</td>
+      <td>${kind === 'verify' ? `<button class="btn p sm" data-act="detail" data-id="${o.id}">ตรวจสอบ</button>` :
+             kind === 'pay' ? `<button class="btn ok sm" data-act="pay" data-id="${o.id}">บันทึกจ่าย</button>` :
+             `<button class="btn sm" data-act="detail" data-id="${o.id}">ดู</button>`}</td></tr>`).join('')}
+    </tbody></table></div>`;
+}
+function pFinance() {
+  const rv = S.orders.filter(o => o.status === 'RECEIVED'), vp = S.orders.filter(o => o.status === 'VERIFIED'), rt = S.orders.filter(o => o.status === 'RETURNED');
+  const sum = (l, k) => l.reduce((s,o) => s + Number(o[k]||0), 0);
+  $('#page').innerHTML = `<h2>ตรวจสอบและจ่ายเงิน</h2>
+    <div class="kpis"><div class="kpi"><div class="l">รอตรวจสอบ</div><div class="v">${rv.length}</div><div class="small mute">${baht(sum(rv,'total_amount'))} บาท</div></div>
+      <div class="kpi"><div class="l">รอจ่าย</div><div class="v">${vp.length}</div><div class="small mute">จ่ายร้าน ${baht(sum(vp,'vendor_amount'))} บาท</div></div>
+      <div class="kpi"><div class="l">ส่งกลับแก้ไข</div><div class="v">${rt.length}</div></div></div>
+    <h3>① รอตรวจสอบหลักฐาน</h3>${finTable(rv, 'verify')}
+    <h3>② ตรวจสอบแล้ว · รอจ่ายเงิน</h3>${finTable(vp, 'pay')}
+    <h3>ส่งกลับให้ทีมอาคารโขนแก้ไข</h3>${rt.length ? finTable(rt, 'view') : '<div class="empty">ไม่มี</div>'}`;
+}
+
+function pSummary() {
+  const list = inMonth().filter(o => o.status !== 'CANCELLED');
+  const m = can('money');
+  const sum = (l, k) => l.reduce((s,o) => s + Number(o[k]||0), 0);
+  const boxes = l => l.reduce((s,o) => s + billBoxes(o), 0);
+  const vend = {};
+  list.forEach(o => { (vend[o.vendor_name] = vend[o.vendor_name] || []).push(o); });
+  const stc = {}; list.forEach(o => stc[o.status] = (stc[o.status] || 0) + 1);
+  const maxB = Math.max(1, ...Object.values(vend).map(boxes));
+  $('#page').innerHTML = `<div class="row"><h2 class="sp">สรุปภาพรวมรายเดือน</h2>
+      <button class="btn noprint" id="printBtn">🖨 พิมพ์</button>${m ? '<button class="btn noprint" id="csvBtn">⬇ CSV</button>' : ''}</div>
+    ${monthBar()}
+    <div class="kpis"><div class="kpi"><div class="l">จำนวนคณะ</div><div class="v">${list.length}</div></div>
+      <div class="kpi"><div class="l">ข้าวกล่องรวม</div><div class="v">${num(boxes(list))}</div></div>
+      ${m ? `<div class="kpi"><div class="l">ยอดเงินรวม</div><div class="v">${baht(sum(list,'total_amount'))}</div></div>
+      <div class="kpi gold"><div class="l">มูลนิธิได้รวม</div><div class="v">${baht(sum(list,'foundation_amount'))}</div></div>
+      <div class="kpi"><div class="l">จ่ายแล้ว / ค้างจ่าย</div><div class="v" style="font-size:18px">${baht(sum(list.filter(o => o.status === 'PAID'),'vendor_amount'))}<br><span class="mute">${baht(sum(list.filter(o => o.status !== 'PAID'),'vendor_amount'))}</span></div></div>` : ''}</div>
+    <div class="row small" style="margin-bottom:6px">${Object.entries(stc).map(([k,v]) => `${st(k)} ${v}`).join(' &nbsp; ')}</div>
+    <h3>แยกตามร้าน</h3>
+    <div class="tw"><table><thead><tr><th>ร้าน</th><th class="n">คณะ</th><th class="n">กล่อง</th><th style="width:22%"></th>${m ? '<th class="n">ยอดเงิน</th><th class="n">มูลนิธิได้</th><th class="n">จ่ายร้าน</th><th class="n">ค้างจ่าย</th>' : ''}</tr></thead><tbody>
+      ${Object.entries(vend).map(([n, l]) => `<tr><td><b>${esc(n)}</b></td><td class="n">${l.length}</td><td class="n">${num(boxes(l))}</td><td><div class="bar"><i style="width:${boxes(l)/maxB*100}%"></i></div></td>
+        ${m ? `<td class="n">${baht(sum(l,'total_amount'))}</td><td class="n">${baht(sum(l,'foundation_amount'))}</td><td class="n">${baht(sum(l,'vendor_amount'))}</td><td class="n">${baht(sum(l.filter(o => o.status !== 'PAID'),'vendor_amount'))}</td>` : ''}</tr>`).join('')}
+      ${list.length ? `<tr style="font-weight:700;background:#eef3fb"><td>รวม</td><td class="n">${list.length}</td><td class="n">${num(boxes(list))}</td><td></td>
+        ${m ? `<td class="n">${baht(sum(list,'total_amount'))}</td><td class="n">${baht(sum(list,'foundation_amount'))}</td><td class="n">${baht(sum(list,'vendor_amount'))}</td><td class="n">${baht(sum(list.filter(o => o.status !== 'PAID'),'vendor_amount'))}</td>` : ''}</tr>` : ''}
+    </tbody></table></div>
+    <h3>รายวัน</h3>
+    ${list.length ? `<div class="tw"><table><thead><tr><th>วันที่</th><th>คณะ</th><th>ร้าน</th><th>เมนู</th><th class="n">กล่อง</th>${m ? '<th class="n">ยอดเงิน</th><th class="n">มูลนิธิ</th>' : ''}<th>สถานะ</th></tr></thead><tbody>
+      ${list.map(o => `<tr class="click" data-act="detail" data-id="${o.id}"><td>${thDate(o.service_date)}</td><td>${esc(o.group_name)}</td><td>${esc(o.vendor_name)}</td><td class="small">${esc(o.menu)}</td><td class="n">${num(billBoxes(o))}</td>
+        ${m ? `<td class="n">${baht(o.total_amount)}</td><td class="n">${baht(o.foundation_amount)}</td>` : ''}<td>${st(o.status)}</td></tr>`).join('')}
+    </tbody></table></div>` : '<div class="empty">ไม่มีข้อมูลเดือนนี้</div>'}`;
+  $('#printBtn').onclick = () => window.print();
+  if (m) $('#csvBtn').onclick = () => exportCSV(list);
+}
+function exportCSV(list) {
+  const h = ['รหัส','วันที่ส่ง','เวลา','คณะ','ร้าน','เมนู','กล่องที่สั่ง','กล่องรับจริง','ราคา/กล่อง','มูลนิธิ/กล่อง','ยอดเงิน','มูลนิธิได้','จ่ายร้าน','สถานะ','ส่งมอบเมื่อ','ผู้ตรวจรับ','ผู้ตรวจสอบ','วันที่จ่าย','เลขอ้างอิงจ่าย'];
+  const rows = list.map(o => [o.id,o.service_date,o.service_time,o.group_name,o.vendor_name,o.menu,o.boxes,o.received_boxes,o.price_per_box,o.foundation_per_box,o.total_amount,o.foundation_amount,o.vendor_amount,STATUS[o.status],o.received_at,o.received_by,o.verified_by,o.paid_at,o.pay_ref]);
+  const csv = '﻿' + [h, ...rows].map(r => r.map(c => `"${String(c ?? '').replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8'}));
+  a.download = `สรุปข้าวกล่อง_${S.month}.csv`; a.click();
+}
+
+function pVendors() {
+  $('#page').innerHTML = `<div class="row"><h2 class="sp">ร้านค้า</h2><button class="btn p" data-act="vendor">+ เพิ่มร้าน</button></div>
+    <div class="tw"><table><thead><tr><th>ร้าน</th><th>ผู้ติดต่อ</th><th>โทร</th><th class="n">ราคา/กล่อง</th><th class="n">มูลนิธิ/กล่อง</th><th>บัญชี</th><th>สถานะ</th><th></th></tr></thead><tbody>
+    ${S.vendors.map(v => `<tr><td><b>${esc(v.name)}</b></td><td>${esc(v.contact)}</td><td>${esc(v.phone)}</td><td class="n">${baht(v.default_price)}</td><td class="n">${baht(v.default_foundation)}</td><td class="small">${esc(v.bank_info)}</td>
+      <td>${v.active === false || v.active === 'FALSE' ? '<span class="st st-CANCELLED">ปิด</span>' : '<span class="st st-PAID">ใช้งาน</span>'}</td><td><button class="btn sm" data-act="vendor" data-id="${v.id}">แก้ไข</button></td></tr>`).join('')}
+    </tbody></table></div>`;
+}
+async function pUsers() {
+  $('#page').innerHTML = '<h2>บัญชีผู้ใช้</h2><div class="empty">กำลังโหลด…</div>';
+  const us = await api('listUsers');
+  S.users = us;
+  $('#page').innerHTML = `<div class="row"><h2 class="sp">บัญชีผู้ใช้ (ส่วนกลางของแต่ละทีม)</h2><button class="btn p" data-act="user">+ เพิ่มบัญชี</button></div>
+    <div class="card small" style="background:#eff6ff;border-color:#bfdbfe;margin-bottom:12px">
+      ใช้ 1 บัญชีต่อทีม ส่งชื่อผู้ใช้/รหัสผ่านให้ผู้รับผิดชอบ · ตอนเข้าระบบทุกคนต้องกรอก <b>ชื่อผู้ปฏิบัติงาน</b> ซึ่งจะถูกบันทึกเป็นผู้บันทึกใน Log<br>
+      เมื่อเปลี่ยนผู้รับผิดชอบ → กด <b>ตั้งรหัสใหม่</b> ทุกเครื่องที่ใช้บัญชีนั้นอยู่จะถูกออกจากระบบทันที</div>
+    <div class="tw"><table><thead><tr><th>ชื่อผู้ใช้</th><th>ชื่อบัญชี</th><th>ทีม</th><th>อีเมล (รับแจ้งเตือน)</th><th>แก้ไขล่าสุด</th><th>สถานะ</th><th></th></tr></thead><tbody>
+    ${us.map(u => `<tr><td><b>${esc(u.username)}</b></td><td>${esc(u.display_name)}</td><td><span class="badge role-${u.role}">${ROLE[u.role]}</span></td><td>${esc(u.email) || '-'}</td>
+      <td class="small">${u.updated_at ? thDT(u.updated_at) : '-'}</td>
+      <td>${u.active === false || u.active === 'FALSE' ? '<span class="st st-CANCELLED">ปิด</span>' : '<span class="st st-PAID">ใช้งาน</span>'}</td>
+      <td><div class="row" style="justify-content:flex-end"><button class="btn sm" data-act="user" data-id="${esc(u.username)}">แก้ไข / ตั้งรหัสใหม่</button>
+        <button class="btn sm bad" data-act="kick" data-id="${esc(u.username)}">บังคับออก</button></div></td></tr>`).join('')}
+    </tbody></table></div>`;
+}
+async function pLogs() {
+  $('#page').innerHTML = '<h2>ประวัติการใช้งาน (Log)</h2><div class="empty">กำลังโหลด…</div>';
+  const l = await api('listLogs');
+  $('#page').innerHTML = `<h2>ประวัติการใช้งาน (Log)</h2><p class="mute small">บันทึกทุกการกระทำ ลบ/แก้ไม่ได้ · แสดง 300 รายการล่าสุด</p>
+    <div class="tw"><table><thead><tr><th>เวลา</th><th>ผู้ปฏิบัติงาน</th><th>บัญชี</th><th>การกระทำ</th><th>รายการ</th><th>รายละเอียด</th></tr></thead><tbody>
+    ${l.map(x => `<tr><td class="small">${thDT(x.timestamp)}</td><td><b>${esc(x.operator || '-')}</b></td><td><span class="badge role-${x.role}">${esc(x.username)}</span></td><td>${esc(x.action)}</td>
+      <td>${x.order_id ? `<a href="#" data-act="detail" data-id="${esc(x.order_id)}">${esc(x.order_id)}</a>` : ''}</td><td class="small mute" style="max-width:320px;word-break:break-word">${esc(x.detail)}</td></tr>`).join('')}
+    </tbody></table></div>`;
+}
+
+/* ======================== MODALS ======================== */
+function modal(title, body, foot = '', cls = '') {
+  $('#modalRoot').innerHTML = `<div class="ov"><div class="md ${cls}"><div class="mh"><h3>${title}</h3><button class="x" data-close>×</button></div>
+    <div class="mb">${body}</div>${foot ? `<div class="mf">${foot}</div>` : ''}</div></div>`;
+}
+function closeModal() { $('#modalRoot').innerHTML = ''; }
+
+function showTodayPopup() {
+  const t = todays();
+  const pend = S.orders.filter(o => o.status === 'RECEIVED').length;
+  const body = `<p style="margin-top:0">วันนี้ <b>${thDateLong(today())}</b> มีการส่งข้าวกล่องให้ <b>${t.length} คณะ</b> รวม <b>${num(t.reduce((s,o) => s + Number(o.boxes), 0))} กล่อง</b></p>
+    ${S.user.role === 'FINANCE' && pend ? `<div class="card" style="background:#eff6ff;border-color:#bfdbfe;margin-bottom:10px">มีรายการรอการเงินตรวจสอบ <b>${pend}</b> รายการ</div>` : ''}
+    <div class="grid">${t.map(o => orderCard(o)).join('')}</div>`;
+  modal('📢 แจ้งเตือน · ส่งข้าวกล่องวันนี้', body,
+    `<button class="btn" id="popMute">ไม่ต้องแสดงอีกวันนี้</button><button class="btn p" data-close>รับทราบ</button>`, 'pop wide');
+  $('.ov .md').classList.add('pop');
+  $('#popMute').onclick = () => { store.set('lb_pop_' + S.user.username + '_' + today(), '1'); closeModal(); };
+}
+
+function orderForm(id) {
+  const o = id ? byId(id) : {service_date:today(), service_time:'11:30', vendor_id:'', boxes:'', group_size:'', menu:'', note:''};
+  const vs = S.vendors.filter(v => !(v.active === false || v.active === 'FALSE') || v.id === o.vendor_id);
+  modal(id ? 'แก้ไขรายการ ' + id : 'เพิ่มรายการคณะเยี่ยมชม', `
+    <form id="oForm">
+      <div class="f2"><div class="f"><label>วันที่ส่งข้าวกล่อง *</label><input type="date" name="service_date" value="${esc(o.service_date)}" required></div>
+        <div class="f"><label>เวลาส่ง *</label><input type="time" name="service_time" value="${esc(o.service_time)}" required></div></div>
+      <div class="f"><label>ชื่อคณะเยี่ยมชม *</label><input name="group_name" value="${esc(o.group_name)}" required></div>
+      <div class="f2"><div class="f"><label>จำนวนผู้มาเยี่ยมชม (คน)</label><input type="number" min="0" name="group_size" value="${esc(o.group_size)}"></div>
+        <div class="f"><label>ร้านที่ทำ *</label><select name="vendor_id" required><option value="">— เลือกร้าน —</option>
+        ${vs.map(v => `<option value="${v.id}" ${v.id === o.vendor_id ? 'selected' : ''}>${esc(v.name)}</option>`).join('')}</select></div></div>
+      <div class="f"><label>เมนู *</label><textarea name="menu" rows="2" required>${esc(o.menu)}</textarea></div>
+      <div class="f2"><div class="f"><label>จำนวนกล่อง *</label><input type="number" min="1" name="boxes" value="${esc(o.boxes)}" required></div>
+        <div class="f"><label>ราคา/กล่อง (บาท)</label><input type="number" step="0.01" min="0" name="price_per_box" value="${esc(o.price_per_box ?? '')}"></div></div>
+      <div class="f2"><div class="f"><label>มูลนิธิได้/กล่อง (บาท)</label><input type="number" step="0.01" min="0" name="foundation_per_box" value="${esc(o.foundation_per_box ?? '')}"></div>
+        <div class="f"><label>หมายเหตุ</label><input name="note" value="${esc(o.note)}"></div></div>
+      <div class="calc" id="oCalc"></div>
+    </form>`,
+    `${id && o.status !== 'PAID' ? '<button class="btn bad" id="oCancel">ยกเลิกรายการ</button><span class="sp"></span>' : ''}
+     <button class="btn" data-close>ปิด</button><button class="btn p" id="oSave">บันทึก</button>`);
+  const f = $('#oForm');
+  const upd = () => { const b = +f.boxes.value || 0, p = +f.price_per_box.value || 0, fd = +f.foundation_per_box.value || 0;
+    $('#oCalc').innerHTML = `<span>ยอดเงิน <b>${baht(b*p)}</b></span><span>มูลนิธิได้ <b>${baht(b*fd)}</b></span><span>จ่ายร้าน <b>${baht(b*(p-fd))}</b></span>`; };
+  f.vendor_id.onchange = () => { const v = S.vendors.find(x => x.id === f.vendor_id.value); if (v) { f.price_per_box.value = v.default_price; f.foundation_per_box.value = v.default_foundation; } upd(); };
+  f.oninput = upd; upd();
+  $('#oSave').onclick = async (e) => {
+    if (!f.reportValidity()) return;
+    const p = Object.fromEntries(new FormData(f)); if (id) p.id = id;
+    await run(() => api('saveOrder', p), e.target); closeModal(); toast('บันทึกแล้ว'); reload();
+  };
+  if ($('#oCancel')) $('#oCancel').onclick = async (e) => {
+    const reason = prompt('เหตุผลการยกเลิก'); if (!reason) return;
+    await run(() => api('cancelOrder', {id, reason}), e.target); closeModal(); toast('ยกเลิกแล้ว'); reload();
+  };
+}
+
+function compress(file, max = 1600, q = 0.8) {
+  return new Promise((res, rej) => {
+    const img = new Image(), url = URL.createObjectURL(file);
+    img.onload = () => { let w = img.width, h = img.height; const k = Math.min(1, max / Math.max(w, h)); w = Math.round(w*k); h = Math.round(h*k);
+      const c = document.createElement('canvas'); c.width = w; c.height = h; c.getContext('2d').drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(url); res(c.toDataURL('image/jpeg', q)); };
+    img.onerror = () => rej(new Error('อ่านไฟล์รูปไม่ได้')); img.src = url;
+  });
+}
+function photoPicker(id) {
+  return `<input type="file" id="${id}" accept="image/*" multiple class="hidden">
+    <div class="drop" data-pick="${id}">📷 ถ่ายรูป / เลือกรูป (เลือกได้หลายรูป)</div><div class="ph" id="${id}Prev" style="margin-top:8px"></div>`;
+}
+function bindPicker(id) {
+  const inp = $('#' + id), files = [];
+  inp.onchange = () => { files.push(...inp.files); inp.value = ''; draw(); };
+  const draw = () => { $('#' + id + 'Prev').innerHTML = files.map((f, i) => `<div><img src="${URL.createObjectURL(f)}"><span data-rm="${i}" style="cursor:pointer">ลบ ✕</span></div>`).join('');
+    $('#' + id + 'Prev').querySelectorAll('[data-rm]').forEach(b => b.onclick = () => { files.splice(+b.dataset.rm, 1); draw(); }); };
+  return files;
+}
+async function uploadAll(orderId, files, kind, btn) {
+  for (let i = 0; i < files.length; i++) {
+    if (btn) btn.textContent = `อัปโหลดรูป ${i+1}/${files.length}…`;
+    const d = await compress(files[i]);
+    await api('uploadPhoto', {order_id:orderId, kind, name:files[i].name, mime:'image/jpeg', data:d.split(',')[1]});
+  }
+}
+
+async function receiveForm(id) {
+  const o = byId(id);
+  const existing = await api('listPhotos', {order_id:id});
+  const ex = existing.filter(p => p.kind === 'delivery');
+  modal('📷 ตรวจรับข้าวกล่อง', `
+    <div class="card" style="background:var(--soft);border-color:#bfdbfe;margin-bottom:14px">
+      <b>${esc(o.group_name)}</b><div class="small">${thDate(o.service_date)} เวลา ${esc(o.service_time)} น. · ร้าน <b>${esc(o.vendor_name)}</b></div>
+      <div class="small">สั่ง <b>${num(o.boxes)} กล่อง</b> · ${esc(o.menu)}</div>
+      ${o.status === 'RETURNED' ? `<div class="small" style="color:var(--bad);margin-top:6px">การเงินแจ้งแก้ไข: ${esc(o.verify_note)}</div>` : ''}</div>
+    <form id="rForm">
+      <div class="f2"><div class="f"><label>วันที่-เวลาที่ส่งมอบจริง *</label><input type="datetime-local" name="received_at" value="${esc(o.received_at || nowLocal())}" required></div>
+        <div class="f"><label>จำนวนกล่องที่รับจริง *</label><input type="number" min="0" name="received_boxes" value="${esc(o.received_boxes !== '' && o.received_boxes != null ? o.received_boxes : o.boxes)}" required></div></div>
+      <div class="f"><label>หมายเหตุ (เช่น สภาพอาหาร, ของขาด/เกิน)</label><textarea name="receive_note" rows="2">${esc(o.receive_note)}</textarea></div>
+      <div class="f"><label>รูปถ่ายหลักฐาน ${ex.length ? `(มีแล้ว ${ex.length} รูป — เพิ่มได้)` : '* อย่างน้อย 1 รูป'}</label>
+        ${ex.length ? `<div class="ph" style="margin-bottom:8px">${ex.map(p => `<a href="${esc(p.url)}" target="_blank"><img src="${esc(p.url)}"></a>`).join('')}</div>` : ''}
+        ${photoPicker('rPh')}</div>
+      <div class="small mute">ผู้บันทึก: <b>${esc(S.user.operator)}</b> [${esc(S.user.username)}] · ระบบบันทึกเวลาที่กดบันทึกลง Log อัตโนมัติ<br>ไม่ใช่คุณ? กด "เปลี่ยนผู้ปฏิบัติงาน" ที่มุมขวาบนก่อนบันทึก</div>
+    </form>`, `<button class="btn" data-close>ปิด</button><button class="btn p" id="rSave">✔ บันทึกตรวจรับ</button>`);
+  const files = bindPicker('rPh');
+  $('#rSave').onclick = async (e) => {
+    const f = $('#rForm'); if (!f.reportValidity()) return;
+    if (!files.length && !ex.length) return toast('กรุณาแนบรูปถ่ายอย่างน้อย 1 รูป', true);
+    const p = Object.fromEntries(new FormData(f)); p.id = id;
+    if (Number(p.received_boxes) !== Number(o.boxes) && !p.receive_note) return toast('จำนวนรับจริงไม่ตรงกับที่สั่ง กรุณาระบุหมายเหตุ', true);
+    const btn = e.target; btn.disabled = true;
+    try { await uploadAll(id, files, 'delivery', btn); btn.textContent = 'กำลังบันทึก…'; await api('receiveOrder', p);
+      closeModal(); toast('บันทึกตรวจรับแล้ว'); reload(); }
+    catch (err) { toast(err.message, true); btn.disabled = false; btn.textContent = '✔ บันทึกตรวจรับ'; }
+  };
+}
+
+function payForm(id) {
+  const o = byId(id);
+  modal('บันทึกจ่ายเงินร้านค้า', `
+    <div class="card" style="background:var(--soft);border-color:#bfdbfe;margin-bottom:14px"><b>${esc(o.group_name)}</b> · ${thDate(o.service_date)}
+      <div class="money"><div>ร้าน<b style="font-size:14px">${esc(o.vendor_name)}</b></div><div>ยอดเงิน<b>${baht(o.total_amount)}</b></div><div>มูลนิธิได้<b>${baht(o.foundation_amount)}</b></div><div>จ่ายร้าน<b>${baht(o.vendor_amount)}</b></div></div>
+      <div class="small mute" style="margin-top:6px">บัญชีร้าน: ${esc((S.vendors.find(v => v.id === o.vendor_id) || {}).bank_info || '-')}</div></div>
+    <form id="pForm"><div class="f2"><div class="f"><label>วันที่จ่าย *</label><input type="date" name="paid_at" value="${today()}" required></div>
+      <div class="f"><label>เลขที่ใบสำคัญ / อ้างอิงการโอน</label><input name="pay_ref"></div></div>
+      <div class="f"><label>แนบหลักฐานการจ่าย (สลิป/ใบสำคัญจ่าย) — ไม่บังคับ</label>${photoPicker('pPh')}</div></form>`,
+    `<button class="btn" data-close>ปิด</button><button class="btn ok" id="pSave">บันทึกจ่ายแล้ว</button>`);
+  const files = bindPicker('pPh');
+  $('#pSave').onclick = async (e) => {
+    const f = $('#pForm'); if (!f.reportValidity()) return;
+    const p = Object.fromEntries(new FormData(f)); p.id = id; const btn = e.target; btn.disabled = true;
+    try { await uploadAll(id, files, 'payment', btn); await api('payOrder', p); closeModal(); toast('บันทึกจ่ายแล้ว'); reload(); }
+    catch (err) { toast(err.message, true); btn.disabled = false; btn.textContent = 'บันทึกจ่ายแล้ว'; }
+  };
+}
+
+async function detail(id) {
+  let o = byId(id);
+  modal('รายละเอียด ' + esc(id), '<div class="empty">กำลังโหลด…</div>', '', 'wide');
+  const [photos, logs] = await Promise.all([api('listPhotos', {order_id:id}), api('listLogs', {order_id:id})]);
+  if (!o) { closeModal(); return toast('รายการนี้ไม่อยู่ในเดือนที่เปิดอยู่', true); }
+  const m = can('money');
+  const step = (on, t) => `<div class="${on ? '' : 'off'}">${t}</div>`;
+  const body = `
+    <div class="row" style="margin-bottom:8px"><h3 class="sp" style="margin:0">${esc(o.group_name)}</h3>${st(o.status)}</div>
+    <div class="grid g2">
+      <div class="oc" style="border-left-width:1px"><div class="meta" style="margin:0">
+        <span>วันที่ส่ง</span><span>${thDateLong(o.service_date)} · ${esc(o.service_time)} น.</span>
+        <span>ผู้เยี่ยมชม</span><span>${num(o.group_size)} คน</span>
+        <span>ร้าน</span><span><b>${esc(o.vendor_name)}</b></span>
+        <span>เมนู</span><span>${esc(o.menu)}</span>
+        <span>กล่อง</span><span>สั่ง ${num(o.boxes)} ${o.received_boxes !== '' && o.received_boxes != null ? `· รับจริง <b>${num(o.received_boxes)}</b>` : ''}</span>
+        ${o.note ? `<span>หมายเหตุ</span><span>${esc(o.note)}</span>` : ''}
+        ${o.receive_note ? `<span>หมายเหตุรับ</span><span>${esc(o.receive_note)}</span>` : ''}
+        ${o.verify_note ? `<span>การเงิน</span><span>${esc(o.verify_note)}</span>` : ''}
+        ${o.cancel_reason ? `<span>ยกเลิก</span><span>${esc(o.cancel_reason)}</span>` : ''}
+      </div>${m ? `<div class="money"><div>ราคา/กล่อง<b>${baht(o.price_per_box)}</b></div><div>ยอดเงิน<b>${baht(o.total_amount)}</b></div><div>มูลนิธิได้<b>${baht(o.foundation_amount)}</b></div><div>จ่ายร้าน<b>${baht(o.vendor_amount)}</b></div></div>` : ''}</div>
+      <div><b>ขั้นตอน</b><div class="tl" style="margin-top:8px">
+        ${step(1, `สร้างรายการ · ${esc(o.created_by)}<div class="small mute">${thDT(o.created_at)}</div>`)}
+        ${step(o.received_at, `ตรวจรับ/ส่งมอบ ${o.received_at ? '· ' + esc(o.received_by) + `<div class="small mute">ส่งมอบ ${thDT(o.received_at)} · บันทึก ${thDT(o.received_saved_at)}</div>` : ''}`)}
+        ${step(o.verified_at, `การเงินตรวจสอบ ${o.verified_at ? '· ' + esc(o.verified_by) + `<div class="small mute">${thDT(o.verified_at)}</div>` : ''}`)}
+        ${step(o.status === 'PAID', `จ่ายเงินร้าน ${o.status === 'PAID' ? `<div class="small mute">${thDate(o.paid_at)}${m && o.pay_ref ? ' · อ้างอิง ' + esc(o.pay_ref) : ''}</div>` : ''}`)}
+      </div></div></div>
+    <h3>รูปหลักฐาน (${photos.length})</h3>
+    ${photos.length ? `<div class="ph">${photos.map(p => `<a href="${esc(p.url)}" target="_blank" title="${esc(p.uploaded_by)} ${thDT(p.uploaded_at)}"><img src="${esc(p.url)}" loading="lazy"><span>${p.kind === 'payment' ? 'จ่ายเงิน' : 'ส่งมอบ'}</span></a>`).join('')}</div>` : '<div class="empty">ยังไม่มีรูป</div>'}
+    <h3>ประวัติรายการนี้ (Log)</h3>
+    <div class="tw"><table><tbody>${logs.map(x => `<tr><td class="small" style="white-space:nowrap">${thDT(x.timestamp)}</td><td>${esc(x.operator || x.display_name)} <span class="badge role-${x.role}">${esc(x.username)}</span></td><td>${esc(x.action)}</td></tr>`).join('')}</tbody></table></div>
+    ${o.status === 'RECEIVED' && can('verify') ? `<div class="f" style="margin-top:14px"><label>หมายเหตุการตรวจสอบ (จำเป็นเมื่อส่งกลับแก้ไข)</label><textarea id="vNote" rows="2"></textarea></div>` : ''}`;
+  const foot = [];
+  if (can('create') && !['PAID','CANCELLED'].includes(o.status)) foot.push(`<button class="btn" data-act="edit" data-id="${id}">แก้ไข</button>`);
+  if (can('receive') && ['SCHEDULED','RETURNED'].includes(o.status)) foot.push(`<button class="btn p" data-act="receive" data-id="${id}">📷 ตรวจรับ</button>`);
+  if (can('verify') && o.status === 'RECEIVED') foot.push(`<button class="btn bad" id="vRet">ส่งกลับแก้ไข</button><button class="btn p" id="vOk">✔ ตรวจสอบผ่าน</button>`);
+  if (can('pay') && o.status === 'VERIFIED') foot.push(`<button class="btn bad" id="vRet">ส่งกลับแก้ไข</button><button class="btn ok" data-act="pay" data-id="${id}">บันทึกจ่าย</button>`);
+  foot.push('<button class="btn" data-close>ปิด</button>');
+  modal('รายละเอียด ' + esc(id), body, foot.join(''), 'wide');
+  if ($('#vOk')) $('#vOk').onclick = async (e) => { await run(() => api('verifyOrder', {id, note:$('#vNote').value}), e.target); closeModal(); toast('ตรวจสอบผ่าน'); reload(); };
+  if ($('#vRet')) $('#vRet').onclick = async (e) => {
+    const note = ($('#vNote') && $('#vNote').value) || prompt('ระบุสิ่งที่ต้องแก้ไข'); if (!note) return toast('กรุณาระบุสิ่งที่ต้องแก้ไข', true);
+    await run(() => api('returnOrder', {id, note}), e.target); closeModal(); toast('ส่งกลับแล้ว'); reload();
+  };
+}
+
+function vendorForm(id) {
+  const v = id ? S.vendors.find(x => x.id === id) : {active:true};
+  modal(id ? 'แก้ไขร้าน' : 'เพิ่มร้าน', `<form id="vForm">
+    <div class="f"><label>ชื่อร้าน *</label><input name="name" value="${esc(v.name)}" required></div>
+    <div class="f2"><div class="f"><label>ผู้ติดต่อ</label><input name="contact" value="${esc(v.contact)}"></div><div class="f"><label>โทร</label><input name="phone" value="${esc(v.phone)}"></div></div>
+    <div class="f2"><div class="f"><label>ราคามาตรฐาน/กล่อง</label><input type="number" step="0.01" name="default_price" value="${esc(v.default_price)}"></div>
+      <div class="f"><label>มูลนิธิได้/กล่อง</label><input type="number" step="0.01" name="default_foundation" value="${esc(v.default_foundation)}"></div></div>
+    <div class="f"><label>บัญชีรับเงิน</label><input name="bank_info" value="${esc(v.bank_info)}"></div>
+    <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" name="active" style="width:auto" ${v.active === false || v.active === 'FALSE' ? '' : 'checked'}> เปิดใช้งาน</label></form>`,
+    `<button class="btn" data-close>ปิด</button><button class="btn p" id="vSave">บันทึก</button>`);
+  $('#vSave').onclick = async (e) => { const f = $('#vForm'); if (!f.reportValidity()) return;
+    const p = Object.fromEntries(new FormData(f)); p.active = f.active.checked; p.default_price = +p.default_price || 0; p.default_foundation = +p.default_foundation || 0; if (id) p.id = id;
+    await run(() => api('saveVendor', p), e.target); S.vendors = (await api('bootstrap', {month:S.month})).vendors; closeModal(); toast('บันทึกแล้ว'); render(); };
+}
+function userForm(id) {
+  const u = id ? S.users.find(x => x.username === id) : {role:'KHON', active:true};
+  modal(id ? 'แก้ไขบัญชี ' + esc(id) : 'เพิ่มบัญชี', `<form id="uForm">
+    <div class="f2"><div class="f"><label>ชื่อผู้ใช้ *</label><input name="username" value="${esc(u.username)}" ${id ? 'readonly' : ''} required pattern="[a-z0-9._\\-]{3,30}" autocapitalize="none"></div>
+      <div class="f"><label>ชื่อบัญชี *</label><input name="display_name" value="${esc(u.display_name)}" placeholder="เช่น ทีมอาคารโขน" required></div></div>
+    <div class="f2"><div class="f"><label>ทีม *</label><select name="role">${Object.entries(ROLE).map(([k,t]) => `<option value="${k}" ${u.role === k ? 'selected' : ''}>${t}</option>`).join('')}</select></div>
+      <div class="f"><label>${id ? 'รหัสผ่านใหม่ (เว้นว่าง = ไม่เปลี่ยน)' : 'รหัสผ่าน *'}</label>
+        <div class="pw"><input name="password" id="uPass" type="text" minlength="6" ${id ? '' : 'required'} autocomplete="off" placeholder="ADMIN กำหนดเอง อย่างน้อย 6 ตัว"><button type="button" data-eye="uPass">👁</button></div></div></div>
+    <div class="f"><label>อีเมลรับแจ้งเตือนทุกเช้า (ไม่บังคับ)</label><input type="email" name="email" value="${esc(u.email)}"></div>
+    <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" name="active" style="width:auto" ${u.active === false || u.active === 'FALSE' ? '' : 'checked'}> เปิดใช้งาน</label>
+    ${id ? '<div class="hint" style="margin-top:8px">ตั้งรหัสใหม่แล้ว ทุกเครื่องที่ใช้บัญชีนี้จะถูกออกจากระบบ</div>' : ''}</form>`,
+    `<button class="btn" data-close>ปิด</button><button class="btn p" id="uSave">บันทึก</button>`);
+  $('#uSave').onclick = async (e) => { const f = $('#uForm'); if (!f.reportValidity()) return;
+    const p = Object.fromEntries(new FormData(f)); p.active = f.active.checked; p.username = p.username.trim().toLowerCase();
+    await run(() => api('saveUser', p), e.target);
+    if (p.password) showCred(p.username, p.password); else { closeModal(); toast('บันทึกแล้ว'); }
+    pUsers(); };
+}
+function showCred(user, pass) {
+  const text = `ระบบแจ้งเตือนข้าวกล่องคณะเยี่ยมชม\n${location.href.split('#')[0]}\nชื่อผู้ใช้: ${user}\nรหัสผ่าน: ${pass}`;
+  modal('ส่งข้อมูลเข้าระบบให้ผู้รับผิดชอบ', `<div class="cred">ชื่อผู้ใช้: <b>${esc(user)}</b><br>รหัสผ่าน: <b>${esc(pass)}</b></div>
+    <p class="small mute">หน้านี้จะแสดงรหัสครั้งเดียว ระบบเก็บรหัสแบบเข้ารหัสทางเดียว ดูย้อนหลังไม่ได้ (ลืมให้ตั้งใหม่)</p>`,
+    `<button class="btn" id="cCopy">📋 คัดลอก</button><button class="btn p" data-close>เสร็จ</button>`);
+  $('#cCopy').onclick = () => navigator.clipboard?.writeText(text).then(() => toast('คัดลอกแล้ว'), () => toast('คัดลอกไม่ได้ กรุณาจดเอง', true));
+}
+
+/* ======================== EVENTS ======================== */
+document.addEventListener('click', e => {
+  const c = e.target.closest('[data-close]'); if (c || e.target.classList.contains('ov')) { closeModal(); return; }
+  const t = e.target.closest('[data-tab]'); if (t) { S.tab = t.dataset.tab; render(); window.scrollTo(0, 0); return; }
+  const g = e.target.closest('[data-goto]'); if (g) { e.preventDefault(); S.tab = g.dataset.goto; render(); return; }
+  const ey = e.target.closest('[data-eye]'); if (ey) { const i = $('#' + ey.dataset.eye); i.type = i.type === 'password' ? 'text' : 'password'; return; }
+  const pk = e.target.closest('[data-pick]'); if (pk) { $('#' + pk.dataset.pick).click(); return; }
+  const mo = e.target.closest('[data-mon]'); if (mo) { const d = toD(S.month + '-01'); d.setMonth(d.getMonth() + Number(mo.dataset.mon)); S.month = ymd(d).slice(0,7); reload(); return; }
+  const a = e.target.closest('[data-act]'); if (!a) return;
+  e.preventDefault();
+  const id = a.dataset.id;
+  ({new:() => orderForm(), edit:() => orderForm(id), detail:() => detail(id), receive:() => receiveForm(id), pay:() => payForm(id),
+    vendor:() => vendorForm(id), user:() => userForm(id),
+    kick:async () => { if (!confirm(`บังคับให้ทุกเครื่องที่ใช้บัญชี ${id} ออกจากระบบ?`)) return; await run(() => api('forceLogout', {username:id})); toast('ดำเนินการแล้ว'); if (id === S.user.username) logout(true); }})[a.dataset.act]?.();
+});
+document.addEventListener('change', e => {
+  if (e.target.id === 'monPick' && e.target.value) { S.month = e.target.value; reload(); }
+  if (e.target.id === 'stFilter') { S.status = e.target.value; render(); }
+});
+$('#bellBtn').onclick = () => todays().length ? showTodayPopup() : toast('วันนี้ไม่มีการส่งข้าวกล่อง');
+$('#logoutBtn').onclick = e => { e.preventDefault(); logout(); };
+$('#loginForm').onsubmit = async e => { e.preventDefault(); const b = e.target.querySelector('button.p');
+  await run(() => login($('#lgUser').value.trim(), $('#lgPass').value, $('#lgOp').value.trim()), b).catch(() => {}); };
+$('#lgOp').value = store.get('lb_operator') || '';
+document.querySelectorAll('[data-demo]').forEach(b => b.onclick = () => {
+  const op = $('#lgOp').value.trim() || ({admin:'สมชาย ใจดี', khon:'วิภา รักงาน', finance:'กมล ละเอียด'})[b.dataset.demo];
+  login(b.dataset.demo, b.dataset.demo + '1234', op).catch(err => toast(err.message, true)); });
+$('#opBtn').onclick = async e => { e.preventDefault();
+  const n = prompt('ชื่อผู้ปฏิบัติงานคนใหม่ (จะใช้เป็นผู้บันทึกนับจากนี้)', ''); if (!n || !n.trim()) return;
+  const u = await run(() => api('setOperator', {operator:n.trim()}));
+  S.user.operator = u.operator; store.set('lb_operator', u.operator); $('#hdName').textContent = u.operator;
+  if (API_URL) store.set('lb_session', JSON.stringify({token:S.token, user:S.user})); toast('เปลี่ยนเป็น ' + u.operator); };
+/* ตารางทุกตารางแปลงเป็นการ์ดบนมือถือ: ติด data-l จากหัวตารางให้แต่ละช่อง */
+function labelTables(root) {
+  root.querySelectorAll('table').forEach(t => {
+    const hs = [...t.querySelectorAll('thead th')].map(th => th.textContent.trim()); if (!hs.length) return;
+    t.classList.add('rt');
+    t.querySelectorAll('tbody tr').forEach(tr => [...tr.children].forEach((td, i) => { if (!td.hasAttribute('data-l')) td.setAttribute('data-l', hs[i] || ''); }));
+  });
+}
+const mo = new MutationObserver(ms => ms.forEach(m => m.target.nodeType === 1 && labelTables(m.target)));
+['#page', '#modalRoot'].forEach(q => mo.observe($(q), {childList:true, subtree:true}));
+
+/* ======================== START ======================== */
+(async () => {
+  if (!API_URL) { $('#demoBanner').classList.remove('hidden'); $('#demoLogin').classList.remove('hidden'); return; }
+  const s = store.get('lb_session');
+  if (s) { try { const d = JSON.parse(s); S.token = d.token; S.user = d.user; await boot(); } catch (e) { logout(true); } }
+})();
+// รีเฟรชข้อมูลทุก 5 นาที และเช็คเปลี่ยนวัน (เปิดค้างไว้ข้ามคืน)
+let lastDay = today();
+setInterval(async () => { if (!S.token) return; try { await reload(); if (today() !== lastDay) { lastDay = today(); $('#hdDate').textContent = thDateLong(today()); if (todays().length) showTodayPopup(); } } catch (e) {} }, 300000);
+</script>
+</body>
+</html>
