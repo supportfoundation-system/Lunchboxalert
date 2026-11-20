@@ -5,185 +5,388 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>แจ้งเตือนข้าวกล่องคณะเยี่ยมชม</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Noto+Serif+Thai:wght@500;600;700&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#0E1B3D">
 <style>
-:root{--bg:#f1f5fb;--card:#fff;--ink:#1f2328;--mute:#6b6b6b;--line:#dbe4f0;--brand:#1d4ed8;--brand2:#3b82f6;--soft:#eff6ff;
---ok:#15803d;--warn:#b45309;--bad:#b91c1c;--info:#1d4ed8;--vio:#6d28d9;--r:14px}
+:root{
+  --navy:#0E1B3D;--navy2:#172A5C;--sap:#1F4BB8;--sapsoft:#E9EFFC;
+  --gold:#B8913A;--gold2:#D9B865;--goldsoft:#F7F0DE;
+  --bg:#F3F5FA;--card:#fff;--ink:#17203A;--mute:#67718B;--line:#E0E5EF;--line2:#EDF0F6;
+  --ok:#1D7A4E;--oksoft:#E4F3EB;--warn:#9A5B0C;--warnsoft:#FBF1E0;--bad:#B42323;--badsoft:#FCEDED;
+  --brand:var(--sap);--soft:var(--sapsoft);--info:var(--sap);--vio:#5B3FB0;
+  --r:16px;--shadow:0 1px 2px rgba(14,27,61,.04),0 10px 28px -14px rgba(14,27,61,.16);
+  --serif:'Noto Serif Thai',Georgia,serif;--sans:'IBM Plex Sans Thai','Noto Sans Thai','Loma',system-ui,sans-serif;
+  --side:252px;
+  --pattern:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44'%3E%3Cg fill='none' stroke='%23D9B865' stroke-opacity='.11' stroke-width='1'%3E%3Cpath d='M22 6 38 22 22 38 6 22z'/%3E%3Cpath d='M22 14c2.5 3 2.5 5 0 8-2.5-3-2.5-5 0-8zM22 30c2.5-3 2.5-5 0-8-2.5 3-2.5 5 0 8zM14 22c3-2.5 5-2.5 8 0-3 2.5-5 2.5-8 0zM30 22c-3-2.5-5-2.5-8 0 3 2.5 5 2.5 8 0z'/%3E%3C/g%3E%3C/svg%3E");
+}
 *{box-sizing:border-box}
-body{margin:0;font-family:'Noto Sans Thai',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5}
-button,input,select,textarea{font:inherit}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--sap)}
 .hidden{display:none!important}
-/* layout */
-header{background:linear-gradient(135deg,#1e3a8a,#2563eb);color:#fff;padding:12px 18px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:20}
-header .t{font-weight:700;font-size:17px;flex:1}
-header .t small{display:block;font-weight:400;opacity:.8;font-size:12px}
-.who{font-size:13px;text-align:right}
-.badge{display:inline-block;padding:2px 10px;border-radius:99px;font-size:12px;font-weight:600}
-.role-ADMIN{background:#fde68a;color:#5b3a0a}.role-KHON{background:#bbf7d0;color:#14532d}.role-FINANCE{background:#bfdbfe;color:#1e3a8a}
-.bell{position:relative;background:rgba(255,255,255,.15);border:0;color:#fff;border-radius:10px;padding:6px 10px;cursor:pointer}
-.bell b{position:absolute;top:-6px;right:-6px;background:#dc2626;color:#fff;border-radius:99px;font-size:11px;padding:0 6px}
-nav{display:flex;gap:4px;overflow-x:auto;padding:8px 14px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:58px;z-index:19}
-nav button{border:0;background:none;padding:8px 14px;border-radius:10px;cursor:pointer;white-space:nowrap;color:var(--mute);font-weight:500}
-nav button i{font-style:normal;margin-right:5px}
-nav button.on{background:var(--soft);color:var(--brand);font-weight:700}
-main{max-width:1180px;margin:0 auto;padding:18px 14px 60px}
-h2{margin:4px 0 14px;font-size:20px}
-h3{margin:18px 0 10px;font-size:16px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px}
-.grid{display:grid;gap:12px}
-.g2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:14px}
-.kpi{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:14px}
-.kpi .l{color:var(--mute);font-size:13px}.kpi .v{font-size:24px;font-weight:700;margin-top:2px}
-.kpi.gold{background:var(--soft);border-color:#bfdbfe}.kpi.gold .v{color:var(--brand)}
-.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.sp{flex:1}
-.btn{border:1px solid var(--line);background:#fff;padding:8px 14px;border-radius:10px;cursor:pointer;font-weight:600}
-.btn:hover{background:#f5f8fd}
-.btn.p{background:var(--brand);border-color:var(--brand);color:#fff}.btn.p:hover{background:#1e40af}
-.btn.ok{background:var(--ok);border-color:var(--ok);color:#fff}
-.btn.bad{color:var(--bad);border-color:#f3c4c4}
-.btn.sm{padding:4px 10px;font-size:13px}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-table{width:100%;border-collapse:collapse;background:#fff}
-th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;font-size:14px}
-th{background:#eef3fb;font-weight:600;color:#1e3a8a;white-space:nowrap}
-td.n,th.n{text-align:right;white-space:nowrap}
-tr.click{cursor:pointer}tr.click:hover td{background:#f5f9ff}
-.tw{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r)}
-.tw table{border:0}
-.st{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:600;white-space:nowrap}
-.st-SCHEDULED{background:#fef3c7;color:#92400e}.st-RECEIVED{background:#dbeafe;color:#1e40af}
-.st-RETURNED{background:#fee2e2;color:#991b1b}.st-VERIFIED{background:#ede9fe;color:#5b21b6}
-.st-PAID{background:#dcfce7;color:#166534}.st-CANCELLED{background:#e5e7eb;color:#4b5563}
 .mute{color:var(--mute)}.small{font-size:13px}
-.empty{padding:28px;text-align:center;color:var(--mute);background:#fff;border:1px dashed var(--line);border-radius:var(--r)}
-/* order card */
-.oc{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:14px;border-left:5px solid var(--brand2)}
-.oc.late{border-left-color:var(--bad)}
-.oc h4{margin:0 0 4px;font-size:16px}
-.oc .meta{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;font-size:14px;margin:8px 0}
-.oc .meta span:nth-child(odd){color:var(--mute)}
-.money{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
-.money div{background:var(--soft);border-radius:10px;padding:6px 10px;font-size:13px}
-.money b{display:block;font-size:16px;color:var(--brand)}
-/* forms */
-label{display:block;font-size:13px;color:#4b4b4b;margin-bottom:4px;font-weight:500}
-input,select,textarea{width:100%;padding:9px 11px;border:1px solid #cbd5e1;border-radius:10px;background:#fff}
-input:focus,select:focus,textarea:focus{outline:2px solid #93c5fd;border-color:#3b82f6}
-.f{margin-bottom:12px}.f2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-@media(max-width:560px){.f2{grid-template-columns:1fr}}
-.calc{background:var(--soft);border-radius:10px;padding:10px 12px;font-size:14px;display:flex;gap:16px;flex-wrap:wrap}
-/* modal */
-.ov{position:fixed;inset:0;background:rgba(30,20,5,.5);display:flex;align-items:flex-start;justify-content:center;padding:30px 12px;z-index:50;overflow-y:auto}
-.md{background:#fff;border-radius:18px;width:100%;max-width:640px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
-.md.wide{max-width:860px}
-.md .mh{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
-.md .mh h3{margin:0;flex:1}
-.md .mb{padding:16px 18px}
-.md .mf{padding:12px 18px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
-.x{border:0;background:none;font-size:22px;cursor:pointer;color:var(--mute)}
-.pop .mh{background:linear-gradient(135deg,#1d4ed8,#3b82f6);color:#fff;border-radius:18px 18px 0 0}
-.pop .mh .x{color:#fff}
-/* photos */
-.ph{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
-.ph a,.ph div{display:block;aspect-ratio:1;border-radius:10px;overflow:hidden;background:#eee;position:relative}
+.sp{flex:1}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.ico{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.crest{width:42px;height:42px;flex:none;display:block}
+:focus-visible{outline:3px solid rgba(31,75,184,.35);outline-offset:2px}
+
+/* ---------- sidebar ---------- */
+.side{position:fixed;inset:0 auto 0 0;width:var(--side);background:var(--navy) var(--pattern);color:#C3CCE2;display:flex;flex-direction:column;padding:22px 16px;z-index:30}
+.brand{display:flex;gap:12px;align-items:center;padding:2px 8px 22px;margin-bottom:14px;border-bottom:1px solid rgba(255,255,255,.08)}
+.brand b{display:block;font-family:var(--serif);font-weight:600;color:#fff;font-size:17px;line-height:1.3}
+.brand small{color:var(--gold2);font-size:12.5px}
+#tabs{display:flex;flex-direction:column;gap:2px}
+#tabs button{position:relative;display:flex;align-items:center;gap:12px;padding:10px 12px;border:0;border-radius:11px;background:none;color:#B4BFDB;font-weight:500;font-size:15px;cursor:pointer;text-align:left;transition:background .15s,color .15s}
+#tabs button:hover{background:rgba(255,255,255,.05);color:#fff}
+#tabs button.on{background:rgba(255,255,255,.09);color:#fff}
+#tabs button.on::before{content:'';position:absolute;left:-16px;top:10px;bottom:10px;width:3px;border-radius:0 3px 3px 0;background:var(--gold2)}
+#tabs .cnt{margin-left:auto;background:var(--gold);color:#fff;font-size:11.5px;font-weight:600;line-height:20px;border-radius:99px;padding:0 7px;min-width:22px;text-align:center}
+.side-foot{margin-top:auto;padding:16px 8px 0;border-top:1px solid rgba(255,255,255,.08);font-size:12px;line-height:1.6;color:#7E8AAA}
+
+/* ---------- top bar ---------- */
+.shell{margin-left:var(--side);min-height:100vh}
+.top{position:sticky;top:0;z-index:20;height:70px;display:flex;align-items:center;gap:12px;padding:0 36px;background:rgba(243,245,250,.86);backdrop-filter:saturate(1.4) blur(12px);-webkit-backdrop-filter:saturate(1.4) blur(12px);border-bottom:1px solid var(--line)}
+.top-l{flex:1;display:flex;align-items:center;gap:10px;min-width:0}
+.top-t{font-family:var(--serif);font-weight:600;font-size:15px;white-space:nowrap}
+.top-d{font-size:14px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.m-only{display:none}
+.iconbtn{position:relative;width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:#fff;display:grid;place-items:center;cursor:pointer;color:var(--ink);flex:none}
+.iconbtn b{position:absolute;top:-6px;right:-6px;background:var(--gold);color:#fff;font-size:11px;line-height:18px;border-radius:99px;padding:0 6px;border:2px solid var(--bg)}
+.me{position:relative;flex:none}
+.me-btn{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:#fff;border-radius:12px;padding:4px 10px 4px 4px;cursor:pointer}
+.av{width:34px;height:34px;border-radius:10px;background:var(--navy);color:var(--gold2);display:grid;place-items:center;font-family:var(--serif);font-weight:600;font-size:16px;flex:none}
+.me-txt{text-align:left;line-height:1.25}.me-txt b{display:block;font-size:14px;font-weight:600;max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.me-txt small{font-size:12px;color:var(--mute)}
+.me-btn .ico{width:16px;height:16px;color:var(--mute)}
+.menu{position:absolute;right:0;top:calc(100% + 8px);min-width:230px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:6px;z-index:40}
+.menu .mhd{padding:10px 12px 12px;border-bottom:1px solid var(--line2);margin-bottom:4px;font-size:13px;color:var(--mute)}
+.menu .mhd b{display:block;color:var(--ink);font-size:15px}
+.menu a{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:9px;color:var(--ink);text-decoration:none;font-size:14px}
+.menu a:hover{background:var(--bg)}
+.menu a .ico{width:18px;height:18px;color:var(--mute)}
+
+main{max-width:1200px;margin:0 auto;padding:30px 36px 90px}
+h2{font-family:var(--serif);font-weight:600;font-size:27px;line-height:1.3;margin:0 0 18px}
+h3{font-family:var(--serif);font-weight:600;font-size:18px;margin:32px 0 12px}
+
+/* ---------- surfaces ---------- */
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:18px 20px}
+.grid{display:grid;gap:16px}.g2{grid-template-columns:repeat(auto-fit,minmax(360px,1fr))}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));background:#fff;border:1px solid var(--line);border-radius:var(--r);margin-bottom:20px;overflow:hidden}
+.kpi{padding:18px 22px;border-right:1px solid var(--line2)}
+.kpi:last-child{border-right:0}
+.kpi .l{font-size:13px;color:var(--mute)}
+.kpi .v{font-size:26px;font-weight:600;margin-top:4px;font-variant-numeric:tabular-nums;letter-spacing:-.01em;line-height:1.25}
+.kpi .v .mute{font-size:17px;font-weight:500}
+.kpi.gold{background:linear-gradient(180deg,#fff 30%,var(--goldsoft))}
+.kpi.gold .v{color:#80621E}
+.empty{padding:38px 20px;text-align:center;color:var(--mute);background:#fff;border:1px dashed #D3DAE8;border-radius:var(--r);font-size:14px}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:40px;padding:0 16px;border-radius:11px;border:1px solid var(--line);background:#fff;color:var(--ink);font-weight:600;font-size:14px;cursor:pointer;white-space:nowrap;transition:background .15s,border-color .15s,box-shadow .15s}
+.btn .ico{width:17px;height:17px}
+.btn:hover{border-color:#C8D1E3;background:#FAFBFE}
+.btn.p{background:var(--sap);border-color:var(--sap);color:#fff;box-shadow:0 8px 16px -10px rgba(31,75,184,.8)}
+.btn.p:hover{background:#1A409F}
+.btn.ok{background:var(--ok);border-color:var(--ok);color:#fff;box-shadow:0 8px 16px -10px rgba(29,122,78,.8)}
+.btn.ok:hover{background:#17663F}
+.btn.bad{color:var(--bad);border-color:#EFCDCD}
+.btn.bad:hover{background:var(--badsoft)}
+.btn.sm{height:34px;padding:0 12px;font-size:13px;border-radius:9px}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn.wide{width:100%}
+
+/* ---------- tables ---------- */
+.tw{background:#fff;border:1px solid var(--line);border-radius:var(--r);overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th,td{padding:12px 16px;border-bottom:1px solid var(--line2);text-align:left;vertical-align:middle;font-size:14px}
+th{font-size:12.5px;font-weight:600;color:var(--mute);background:#FAFBFD;white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+td.n,th.n{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+tr.click{cursor:pointer}tr.click:hover td{background:#F6F8FD}
+
+/* ---------- status ---------- */
+.st{display:inline-flex;align-items:center;gap:6px;padding:3px 11px 3px 9px;border-radius:99px;font-size:12.5px;font-weight:600;white-space:nowrap;line-height:1.5}
+.st::before{content:'';width:7px;height:7px;border-radius:50%;background:currentColor}
+.st-SCHEDULED{background:var(--warnsoft);color:var(--warn)}.st-RECEIVED{background:var(--sapsoft);color:var(--sap)}
+.st-RETURNED{background:var(--badsoft);color:var(--bad)}.st-VERIFIED{background:#EFEBFB;color:var(--vio)}
+.st-PAID{background:var(--oksoft);color:var(--ok)}.st-CANCELLED{background:#EEF0F4;color:#6B7280}
+.badge{display:inline-block;padding:2px 10px;border-radius:99px;font-size:12px;font-weight:600}
+.role-ADMIN{background:var(--goldsoft);color:#7A5A16}.role-KHON{background:var(--oksoft);color:var(--ok)}.role-FINANCE{background:var(--sapsoft);color:var(--sap)}
+
+/* ---------- order card ---------- */
+.oc{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;box-shadow:var(--shadow)}
+.oc.late{border-color:#EDC8C8;box-shadow:inset 3px 0 0 var(--bad),var(--shadow)}
+.oc-h{display:flex;gap:12px;align-items:flex-start;justify-content:space-between}
+.oc h4{margin:0;font-family:var(--serif);font-weight:600;font-size:17px;line-height:1.4}
+.oc-sub{font-size:13px;color:var(--mute);margin-top:2px}
+.oc-sub .late-t{color:var(--bad);font-weight:600}
+.oc-b{display:flex;gap:18px;margin-top:14px;align-items:flex-start}
+.oc-qty{flex:none;width:86px;text-align:center;padding:10px 4px;border-radius:12px;background:var(--bg)}
+.oc-qty b{display:block;font-size:27px;font-weight:600;line-height:1.1;font-variant-numeric:tabular-nums;color:var(--navy)}
+.oc-qty span{font-size:12px;color:var(--mute)}
+.oc-qty em{display:block;font-style:normal;font-size:11.5px;color:var(--bad);margin-top:2px}
+.oc dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:5px 14px;font-size:14px;min-width:0}
+.oc dt{color:var(--mute)}.oc dd{margin:0;min-width:0}
+.oc-f{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
+.meta{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:14px}
+.meta span:nth-child(odd){color:var(--mute)}
+.money{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));margin-top:14px;padding-top:12px;border-top:1px solid var(--line2)}
+.money div{font-size:12.5px;color:var(--mute);padding:0 14px;border-left:1px solid var(--line2)}
+.money div:first-child{padding-left:0;border-left:0}
+.money b{display:block;font-size:17px;color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums;margin-top:1px}
+
+/* ---------- today ---------- */
+.today-head{display:flex;align-items:flex-end;gap:20px;padding:0 0 24px;margin-bottom:26px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.dayno{font-family:var(--serif);font-size:88px;line-height:.82;font-weight:600;color:var(--navy);font-variant-numeric:lining-nums}
+.dayname{font-family:var(--serif);font-size:23px;font-weight:600;line-height:1.3}
+.dayname::before{content:'';display:block;width:30px;height:3px;border-radius:2px;background:var(--gold);margin-bottom:10px}
+.daymonth{color:var(--mute);font-size:15px}
+.today-sum{margin:0 0 4px auto;font-size:15px;text-align:right;max-width:440px;color:#3A4560}
+.today-sum b{color:var(--ink);font-variant-numeric:tabular-nums}
+.today-grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:30px;align-items:start}
+.tl-item{display:grid;grid-template-columns:62px 20px minmax(0,1fr);gap:0 12px;padding-bottom:18px}
+.tl-time{font-family:var(--serif);font-size:21px;font-weight:600;text-align:right;padding-top:15px;color:var(--navy);line-height:1.2;font-variant-numeric:tabular-nums}
+.tl-time small{display:block;font-family:var(--sans);font-size:12px;color:var(--mute);font-weight:400}
+.tl-dot{position:relative}
+.tl-dot::before{content:'';position:absolute;left:9px;top:0;bottom:-18px;width:2px;background:var(--line)}
+.tl-item:first-child .tl-dot::before{top:24px}
+.tl-item:last-child .tl-dot::before{bottom:auto;height:24px}
+.tl-item:only-child .tl-dot::before{display:none}
+.tl-dot::after{content:'';position:absolute;left:3px;top:21px;width:14px;height:14px;border-radius:50%;background:#fff;border:3px solid var(--gold)}
+.panel{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:6px 20px 8px}
+.panel h4{font-family:var(--serif);font-weight:600;font-size:15px;margin:14px 0 4px}
+.stat{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:12px 0;border-bottom:1px solid var(--line2)}
+.stat:last-child{border-bottom:0}
+.stat span{color:var(--mute);font-size:14px}
+.stat b{font-size:20px;font-weight:600;font-variant-numeric:tabular-nums}
+.stat b.g{color:#80621E}
+.alert{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:12px;background:var(--badsoft);border:1px solid #F0D0D0;color:#7A1C1C;font-size:14px;margin-bottom:14px}
+.alert .ico{color:var(--bad);margin-top:1px}
+.up{display:grid;grid-template-columns:100px minmax(0,1fr);background:#fff;border:1px solid var(--line);border-radius:var(--r);margin-bottom:10px;overflow:hidden}
+.up-date{padding:14px 10px;text-align:center;border-right:1px solid var(--line2);background:#FAFBFD}
+.up-date b{display:block;font-family:var(--serif);font-size:30px;line-height:1.05;color:var(--navy);font-weight:600}
+.up-date span{font-size:12.5px;color:var(--mute)}
+.up-row{display:grid;grid-template-columns:60px minmax(0,1fr) auto auto;gap:14px;align-items:center;padding:12px 18px;border-bottom:1px solid var(--line2);cursor:pointer}
+.up-row:last-child{border-bottom:0}
+.up-row:hover{background:#F6F8FD}
+.up-row .t{color:var(--mute);font-size:14px;font-variant-numeric:tabular-nums}
+.up-row .g{min-width:0}.up-row .g b{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.up-row .g span{font-size:13px;color:var(--mute)}
+.up-row .q{font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.up-row .q small{font-weight:400;color:var(--mute)}
+
+/* ---------- forms ---------- */
+label{display:block;font-size:13px;font-weight:500;color:#3A445E;margin-bottom:6px}
+input,select,textarea{width:100%;height:44px;padding:0 13px;border:1px solid #D4DBE8;border-radius:11px;background:#fff;font-size:15px;transition:border-color .15s,box-shadow .15s}
+textarea{height:auto;padding:10px 13px;line-height:1.5}
+input[type=checkbox]{width:18px;height:18px;accent-color:var(--sap)}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--sap);box-shadow:0 0 0 4px rgba(31,75,184,.12)}
+input[readonly]{background:var(--bg)}
+.f{margin-bottom:14px}.f2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.calc{background:var(--bg);border-radius:12px;padding:12px 16px;display:flex;gap:22px;flex-wrap:wrap;font-size:14px;color:var(--mute)}
+.calc b{color:var(--ink);font-variant-numeric:tabular-nums}
+.hint{font-size:12.5px;color:var(--mute);margin-top:6px}
+.pw{position:relative}.pw input{padding-right:46px}
+.pw button{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:none;cursor:pointer;color:var(--mute);width:34px;height:34px;display:grid;place-items:center;border-radius:8px}
+.pw button:hover{background:var(--bg)}
+.chk{display:flex;gap:10px;align-items:center;font-size:14px;color:var(--ink);margin:4px 0 0}
+
+/* ---------- modal ---------- */
+.ov{position:fixed;inset:0;background:rgba(9,17,40,.55);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);display:flex;align-items:flex-start;justify-content:center;padding:48px 16px;z-index:50;overflow-y:auto;animation:fade .18s ease-out}
+.md{background:#fff;border-radius:22px;width:100%;max-width:640px;box-shadow:0 30px 80px -20px rgba(9,17,40,.5);animation:rise .24s cubic-bezier(.2,.8,.2,1)}
+.md.wide{max-width:900px}
+.md .mh{padding:20px 24px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line2)}
+.md .mh h3{margin:0;flex:1;font-size:19px}
+.md .mb{padding:20px 24px}
+.md .mf{padding:14px 24px 20px;display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;border-top:1px solid var(--line2)}
+.x{width:36px;height:36px;border-radius:10px;border:0;background:var(--bg);cursor:pointer;color:var(--mute);display:grid;place-items:center}
+.x .ico{width:18px;height:18px}
+.pop .mh{background:var(--navy) var(--pattern);border-radius:22px 22px 0 0;border-bottom:2px solid var(--gold2);padding:22px 24px}
+.pop .mh h3{color:#fff}
+.pop .mh .x{background:rgba(255,255,255,.1);color:#fff}
+.pop .mh .ico.bellc{color:var(--gold2);width:22px;height:22px}
+.lead{margin:0 0 16px;font-size:15px;color:#3A4560}
+.note{background:var(--sapsoft);border-radius:12px;padding:12px 16px;font-size:14px;margin-bottom:14px;color:#203A84}
+.sum-box{background:var(--bg);border-radius:14px;padding:16px 18px;margin-bottom:16px}
+.sum-box b.t{font-family:var(--serif);font-size:16px;font-weight:600}
+@keyframes fade{from{opacity:0}}
+@keyframes rise{from{opacity:0;transform:translateY(14px) scale(.985)}}
+
+/* ---------- photos / timeline ---------- */
+.ph{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:10px}
+.ph a,.ph div{display:block;aspect-ratio:1;border-radius:12px;overflow:hidden;background:var(--bg);position:relative;border:1px solid var(--line2)}
 .ph img{width:100%;height:100%;object-fit:cover}
-.ph span{position:absolute;left:4px;bottom:4px;background:rgba(0,0,0,.6);color:#fff;font-size:11px;padding:1px 6px;border-radius:6px}
-.drop{border:2px dashed #93c5fd;border-radius:12px;padding:14px;text-align:center;background:#f8fbff;cursor:pointer}
-/* timeline */
-.tl{border-left:2px solid var(--line);margin-left:6px;padding-left:14px}
-.tl div{position:relative;margin-bottom:10px;font-size:14px}
-.tl div:before{content:'';position:absolute;left:-20px;top:6px;width:10px;height:10px;border-radius:50%;background:var(--brand2)}
-.tl div.off:before{background:#d4d4d4}.tl div.off{color:#a3a3a3}
-/* login */
-.login{max-width:400px;margin:60px auto;padding:0 14px}
-.login .card{padding:26px}
-.logo{width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#1d4ed8,#60a5fa);display:grid;place-items:center;font-size:28px;margin-bottom:12px}
-.demo{margin-top:18px;padding-top:16px;border-top:1px dashed var(--line)}
+.ph span{position:absolute;left:6px;bottom:6px;background:rgba(14,27,61,.75);color:#fff;font-size:11px;padding:2px 8px;border-radius:99px}
+.drop{display:flex;align-items:center;justify-content:center;gap:10px;border:1.5px dashed #B9C7E3;border-radius:14px;padding:18px;text-align:center;background:#F8FAFE;cursor:pointer;color:var(--sap);font-weight:600;font-size:14px}
+.drop:hover{background:var(--sapsoft)}
+.tl{border-left:2px solid var(--line);margin-left:6px;padding-left:18px}
+.tl div{position:relative;margin-bottom:14px;font-size:14px}
+.tl div::before{content:'';position:absolute;left:-25px;top:5px;width:12px;height:12px;border-radius:50%;background:#fff;border:3px solid var(--gold)}
+.tl div.off{color:#A3A9B8}.tl div.off::before{border-color:#D6DBE5}
+
+/* ---------- misc ---------- */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:12px 20px;border-radius:12px;z-index:99;font-size:14px;max-width:90vw;box-shadow:0 16px 32px -12px rgba(9,17,40,.5);border-left:3px solid var(--gold2)}
+.toast.err{background:#7A1C1C;border-left-color:#F3A6A6}
+.banner{background:var(--goldsoft);color:#6B5216;padding:8px 14px;font-size:13px;text-align:center;border-bottom:1px solid #EADBB4}
+.bar{height:8px;background:var(--line2);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--sap),#5B84E6);border-radius:99px}
+.cred{background:var(--bg);border-radius:14px;padding:18px 20px;font-size:16px;line-height:2}
+.cred b{font-family:ui-monospace,Menlo,monospace;font-size:18px;color:var(--navy);margin-left:6px}
+.monthbar{display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.monthbar b{font-family:var(--serif);font-size:16px;font-weight:600;margin-left:6px}
+.pagehd{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap;margin-bottom:6px}
+.pagehd h2{flex:1;margin-bottom:12px}
+
+/* ---------- login ---------- */
+.login{min-height:100vh;display:grid;grid-template-columns:1.05fr 1fr}
+.login-art{background:var(--navy) var(--pattern);color:#fff;padding:56px 60px;display:flex;flex-direction:column;justify-content:space-between;gap:40px}
+.login-art .crest{width:68px;height:68px}
+.login-art h1{font-family:var(--serif);font-weight:600;font-size:44px;line-height:1.25;margin:28px 0 0}
+.login-art .rule{width:52px;height:3px;border-radius:2px;background:var(--gold2);margin:24px 0}
+.login-art p{color:#B9C4DE;font-size:16px;line-height:1.75;max-width:430px;margin:0}
+.art-foot{font-size:13px;color:#7E8AAA}
+.login-form{display:flex;align-items:center;justify-content:center;padding:48px 28px;background:#fff}
+.lf{width:100%;max-width:390px}
+.lf h2{margin-bottom:6px}
+.lf .lead{margin-bottom:26px}
+.demo{margin-top:24px;padding-top:20px;border-top:1px solid var(--line2)}
 .demo .row button{flex:1}
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1f2328;color:#fff;padding:10px 18px;border-radius:12px;z-index:99;font-size:14px;max-width:90vw}
-.toast.err{background:var(--bad)}
-.banner{background:#e0f2fe;border:1px solid #7dd3fc;color:#075985;padding:8px 14px;font-size:13px;text-align:center}
-.bar{height:10px;background:#e2e8f0;border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:var(--brand2)}
-.pw{position:relative}.pw input{padding-right:44px}
-.pw button{position:absolute;right:4px;top:50%;transform:translateY(-50%);border:0;background:none;cursor:pointer;font-size:16px;padding:6px}
-.hint{font-size:12px;color:var(--mute);margin-top:4px}
-.oprow{font-size:11px;opacity:.85}.oprow a{color:#bfdbfe}
-.cred{background:#eff6ff;border:1px dashed #93c5fd;border-radius:12px;padding:14px;font-size:17px;line-height:1.9}
-.cred b{font-family:ui-monospace,monospace;font-size:18px;color:#1e3a8a}
-@media(max-width:720px){
-  body{padding-bottom:70px}
-  header{padding:10px 12px;gap:8px}
-  header .t{font-size:15px}header .t small{font-size:11px}
-  .who{font-size:12px;max-width:45vw}
-  nav{position:fixed;top:auto;bottom:0;left:0;right:0;border-top:1px solid var(--line);border-bottom:0;
-    padding:4px 4px calc(4px + env(safe-area-inset-bottom));box-shadow:0 -4px 16px rgba(15,23,42,.08)}
-  nav button{display:flex;flex-direction:column;align-items:center;font-size:11px;padding:5px 6px;min-width:66px;flex:1;line-height:1.3}
-  nav button i{font-size:20px;margin:0}
-  main{padding:14px 10px 90px}
-  h2{font-size:18px}h3{font-size:15px}
-  .kpis{grid-template-columns:1fr 1fr;gap:8px}.kpi{padding:10px 12px}.kpi .v{font-size:19px}
+
+/* ---------- mobile ---------- */
+@media (max-width:880px){
+  .side{inset:auto 0 0 0;width:auto;flex-direction:row;padding:6px 6px calc(6px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid var(--line);box-shadow:0 -10px 30px -16px rgba(14,27,61,.25)}
+  .brand,.side-foot{display:none}
+  #tabs{flex-direction:row;width:100%;overflow-x:auto;gap:2px;scrollbar-width:none}
+  #tabs button{flex:1;flex-direction:column;gap:3px;padding:7px 4px 6px;min-width:64px;font-size:11.5px;color:var(--mute);text-align:center;border-radius:12px}
+  #tabs button:hover{background:none;color:var(--mute)}
+  #tabs button.on{background:var(--sapsoft);color:var(--sap)}
+  #tabs button.on::before{display:none}
+  #tabs .ico{width:22px;height:22px}
+  #tabs .cnt{position:absolute;top:2px;left:calc(50% + 6px);margin:0;font-size:10px;line-height:16px;padding:0 5px;min-width:16px}
+  .shell{margin-left:0;padding-bottom:78px}
+  .top{height:62px;padding:0 14px;background:var(--navy) var(--pattern);border-bottom:2px solid var(--gold);backdrop-filter:none;-webkit-backdrop-filter:none}
+  .m-only{display:block}
+  .top .crest{width:36px;height:36px}
+  .top-t{color:#fff}.top-d{color:#AEB9D6;font-size:12px}
+  .iconbtn{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.14);color:#fff;width:40px;height:40px}
+  .iconbtn b{border-color:var(--navy)}
+  .me-btn{background:none;border:0;padding:0}
+  .me-txt,.me-btn>.ico{display:none}
+  .av{background:var(--gold2);color:var(--navy);width:38px;height:38px}
+  main{padding:20px 14px 30px}
+  h2{font-size:22px}
+  h3{margin-top:26px}
   .g2{grid-template-columns:1fr}
+  .today-head{gap:14px;padding-bottom:18px;margin-bottom:20px}
+  .dayno{font-size:66px}.dayname{font-size:19px}
+  .today-sum{margin:4px 0 0;text-align:left;flex-basis:100%}
+  .today-grid{grid-template-columns:1fr;gap:6px}
+  .today-side{order:-1}
+  .oc{padding:16px}
+  .oc-b{gap:12px}.oc-qty{width:70px}.oc-qty b{font-size:23px}
+  .oc-f .btn{flex:1}
+  .oc .money{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .money div{padding:0 8px;font-size:12px}.money b{font-size:14.5px}
+  .tl-item{display:block;padding-bottom:16px}
+  .tl-dot{display:none}
+  .tl-time{display:flex;align-items:center;gap:8px;text-align:left;padding:0 0 8px 2px;font-size:17px}
+  .tl-time::before{content:'';width:10px;height:10px;border-radius:50%;border:3px solid var(--gold);background:#fff}
+  .tl-time small{display:inline;font-size:12px}
+  .kpis{grid-template-columns:1fr 1fr}
+  .kpi{padding:14px 16px;border-bottom:1px solid var(--line2)}
+  .kpi .v{font-size:20px}
+  .up{grid-template-columns:72px minmax(0,1fr)}
+  .up-date b{font-size:24px}
+  .up-row{grid-template-columns:44px minmax(0,1fr) auto;gap:10px;padding:12px 14px}
+  .up-row .s{display:none}
+  .f2{grid-template-columns:1fr}
   input,select,textarea{font-size:16px}
   .ov{padding:0;align-items:stretch}
   .md,.md.wide{border-radius:0;min-height:100%;max-width:none;display:flex;flex-direction:column}
-  .md .mb{flex:1}.md .mh{position:sticky;top:0;background:#fff;z-index:2}
-  .pop .mh{border-radius:0;background:linear-gradient(135deg,#1d4ed8,#3b82f6)}
-  .md .mf{position:sticky;bottom:0;background:#fff;padding-bottom:calc(12px + env(safe-area-inset-bottom))}
+  .md .mh{position:sticky;top:0;background:#fff;z-index:2}
+  .pop .mh{border-radius:0;background:var(--navy) var(--pattern)}
+  .md .mb{flex:1;padding:18px}
+  .md .mf{position:sticky;bottom:0;background:#fff;padding:12px 16px calc(12px + env(safe-area-inset-bottom))}
   .md .mf .btn{flex:1 1 40%}.md .mf .sp{display:none}
-  .oc .row .btn{flex:1}
   .tw{border:0;background:none;overflow:visible}
   table.rt,table.rt tbody,table.rt tr,table.rt td{display:block;width:100%}
-  table.rt thead{display:none}table.rt{background:none}
-  table.rt tr{background:#fff;border:1px solid var(--line);border-radius:12px;margin-bottom:8px;padding:8px 12px}
-  table.rt td{border:0;padding:3px 0;display:flex;gap:12px;justify-content:space-between;align-items:center;text-align:right!important;max-width:none!important}
-  table.rt td::before{content:attr(data-l);color:var(--mute);font-size:12px;text-align:left;flex-shrink:0}
-  table.rt td[data-l=""]::before{display:none}table.rt td[data-l=""]{justify-content:flex-end}
+  table.rt thead{display:none}
+  table.rt{background:none}
+  table.rt tr{background:#fff;border:1px solid var(--line);border-radius:14px;margin-bottom:10px;padding:10px 14px;box-shadow:var(--shadow)}
+  table.rt td{border:0;padding:4px 0;display:flex;gap:12px;justify-content:space-between;align-items:center;text-align:right!important;max-width:none!important}
+  table.rt td::before{content:attr(data-l);color:var(--mute);font-size:12.5px;text-align:left;flex-shrink:0}
+  table.rt td[data-l=""]::before{display:none}
+  table.rt td[data-l=""]{justify-content:flex-end}
+  table.rt td:first-child{font-weight:600;border-bottom:1px solid var(--line2);padding-bottom:8px;margin-bottom:4px}
   table.rt td .bar{flex:1;max-width:60%}
-  table.rt td:first-child{font-weight:600;border-bottom:1px solid var(--line);padding-bottom:6px;margin-bottom:2px}
-  .row>select,.row>input[type=month]{flex:1}
+  tr.click:hover td{background:none}
+  .monthbar input{flex:1}
+  .login{grid-template-columns:1fr;background:var(--navy)}
+  .login-art{padding:34px 24px 46px;gap:0}
+  .login-art .crest{width:52px;height:52px}
+  .login-art h1{font-size:28px;margin-top:18px}
+  .login-art .rule{margin:16px 0}
+  .login-art p{font-size:14.5px}
+  .art-foot{display:none}
+  .login-form{align-items:flex-start;padding:30px 20px 48px;border-radius:24px 24px 0 0;margin-top:-22px;position:relative}
 }
-@media print{header,nav,.noprint,.banner{display:none!important}main{padding:0}body{background:#fff}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media print{.side,.top,.noprint,.banner{display:none!important}.shell{margin:0}main{padding:0}body{background:#fff}}
 </style>
 </head>
 <body>
-<div id="demoBanner" class="banner hidden">โหมดสาธิต — ข้อมูลตัวอย่าง รีเฟรชแล้วหาย · ใส่ API_URL ของ Apps Script เพื่อใช้งานจริง</div>
+<div id="demoBanner" class="banner hidden">โหมดสาธิต: ข้อมูลตัวอย่างจะหายเมื่อรีเฟรช</div>
 
 <!-- LOGIN -->
 <section id="loginView" class="login">
-  <div class="card">
-    <div class="logo">🍱</div>
-    <h2 style="margin:0">แจ้งเตือนข้าวกล่องคณะเยี่ยมชม</h2>
-    <p class="mute small" style="margin:4px 0 18px">สำนักงานสนับสนุนมูลนิธิและโครงการ</p>
+  <div class="login-art">
+    <div>
+      <svg class="crest" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22.5" fill="#0E1B3D" stroke="#D9B865" stroke-width="1.5"/><g fill="none" stroke="#D9B865" stroke-width="1.6" stroke-linejoin="round"><path d="M24 9 39 24 24 39 9 24z"/><path d="M24 14c3 4 3 6 0 10-3-4-3-6 0-10zM24 34c3-4 3-6 0-10-3 4-3 6 0 10zM14 24c4-3 6-3 10 0-4 3-6 3-10 0zM34 24c-4-3-6-3-10 0 4 3 6 3 10 0z"/></g><circle cx="24" cy="24" r="2.2" fill="#D9B865"/></svg>
+      <h1>ข้าวกล่อง<br>คณะเยี่ยมชม</h1>
+      <div class="rule"></div>
+      <p>แจ้งเตือนวันส่ง ตรวจรับพร้อมหลักฐาน และจ่ายเงินร้านค้า ในระบบเดียวที่ทุกทีมใช้ข้อมูลชุดเดียวกัน</p>
+    </div>
+    <div class="art-foot">สำนักงานสนับสนุนมูลนิธิและโครงการ</div>
+  </div>
+  <div class="login-form"><div class="lf">
+    <h2>เข้าสู่ระบบ</h2>
+    <p class="lead mute">ใช้บัญชีของทีม และระบุชื่อผู้ที่ใช้งานอยู่</p>
     <form id="loginForm">
-      <div class="f"><label>ชื่อผู้ใช้ (บัญชีของทีม)</label><input id="lgUser" autocomplete="username" autocapitalize="none" required></div>
-      <div class="f"><label>รหัสผ่าน</label><div class="pw"><input id="lgPass" type="password" autocomplete="current-password" required><button type="button" data-eye="lgPass">👁</button></div></div>
-      <div class="f"><label>ชื่อผู้ปฏิบัติงาน *</label><input id="lgOp" placeholder="ชื่อ-สกุล ของผู้ที่ใช้งานอยู่ตอนนี้" required maxlength="60">
-        <div class="hint">บัญชีใช้ร่วมกันทั้งทีม — ชื่อนี้จะถูกบันทึกเป็น "ผู้บันทึก" ในทุกรายการและ Log</div></div>
-      <button class="btn p" style="width:100%">เข้าสู่ระบบ</button>
+      <div class="f"><label for="lgUser">ชื่อผู้ใช้</label><input id="lgUser" autocomplete="username" autocapitalize="none" required></div>
+      <div class="f"><label for="lgPass">รหัสผ่าน</label><div class="pw"><input id="lgPass" type="password" autocomplete="current-password" required><button type="button" data-eye="lgPass" aria-label="แสดงรหัสผ่าน"><svg class="ico" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
+      <div class="f"><label for="lgOp">ชื่อผู้ปฏิบัติงาน</label><input id="lgOp" placeholder="ชื่อ-สกุล" required maxlength="60">
+        <div class="hint">ชื่อนี้จะบันทึกเป็นผู้บันทึกในทุกรายการ เพราะทั้งทีมใช้บัญชีร่วมกัน</div></div>
+      <button class="btn p wide" style="height:46px;margin-top:6px">เข้าสู่ระบบ</button>
     </form>
     <div id="demoLogin" class="demo hidden">
-      <div class="small mute" style="margin-bottom:8px">ทดลองเข้าใช้ในบทบาท (รหัส: admin1234 / khon1234 / finance1234)</div>
+      <div class="small mute" style="margin-bottom:10px">ทดลองเข้าใช้ในบทบาท (รหัส: admin1234 / khon1234 / finance1234)</div>
       <div class="row">
         <button class="btn" data-demo="admin">ADMIN</button>
         <button class="btn" data-demo="khon">อาคารโขน</button>
         <button class="btn" data-demo="finance">การเงิน</button>
       </div>
     </div>
-  </div>
+  </div></div>
 </section>
 
-<!-- APP -->
 <section id="appView" class="hidden">
-  <header>
-    <div class="t">🍱 ข้าวกล่องคณะเยี่ยมชม<small id="hdDate"></small></div>
-    <button class="bell" id="bellBtn" title="รายการวันนี้">🔔<b id="bellN" class="hidden">0</b></button>
-    <div class="who"><div id="hdName" style="font-weight:600"></div><span id="hdRole" class="badge"></span>
-      <div class="oprow"><a href="#" id="opBtn">เปลี่ยนผู้ปฏิบัติงาน</a> · <a href="#" id="logoutBtn">ออก</a></div></div>
-  </header>
-  <nav id="tabs"></nav>
-  <main id="page"></main>
+  <aside class="side">
+    <div class="brand"><svg class="crest" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22.5" fill="#0E1B3D" stroke="#D9B865" stroke-width="1.5"/><g fill="none" stroke="#D9B865" stroke-width="1.6" stroke-linejoin="round"><path d="M24 9 39 24 24 39 9 24z"/><path d="M24 14c3 4 3 6 0 10-3-4-3-6 0-10zM24 34c3-4 3-6 0-10-3 4-3 6 0 10zM14 24c4-3 6-3 10 0-4 3-6 3-10 0zM34 24c-4-3-6-3-10 0 4 3 6 3 10 0z"/></g><circle cx="24" cy="24" r="2.2" fill="#D9B865"/></svg><div><b>ข้าวกล่อง<br>คณะเยี่ยมชม</b><small>ระบบแจ้งเตือนและตรวจรับ</small></div></div>
+    <nav id="tabs" aria-label="เมนูหลัก"></nav>
+    <div class="side-foot">สำนักงานสนับสนุน<br>มูลนิธิและโครงการ</div>
+  </aside>
+  <div class="shell">
+    <header class="top">
+      <div class="top-l"><span class="m-only"><svg class="crest" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22.5" fill="#0E1B3D" stroke="#D9B865" stroke-width="1.5"/><g fill="none" stroke="#D9B865" stroke-width="1.6" stroke-linejoin="round"><path d="M24 9 39 24 24 39 9 24z"/><path d="M24 14c3 4 3 6 0 10-3-4-3-6 0-10zM24 34c3-4 3-6 0-10-3 4-3 6 0 10zM14 24c4-3 6-3 10 0-4 3-6 3-10 0zM34 24c-4-3-6-3-10 0 4 3 6 3 10 0z"/></g><circle cx="24" cy="24" r="2.2" fill="#D9B865"/></svg></span><div style="min-width:0"><div class="top-t m-only">ข้าวกล่องคณะเยี่ยมชม</div><div id="hdDate" class="top-d"></div></div></div>
+      <button class="iconbtn" id="bellBtn" title="รายการวันนี้" aria-label="รายการวันนี้"><svg class="ico" viewBox="0 0 24 24"><path d="M6 16v-5a6 6 0 1 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg><b id="bellN" class="hidden">0</b></button>
+      <div class="me"><button class="me-btn" id="meBtn" aria-haspopup="true"><span class="av" id="hdAv"></span><span class="me-txt"><b id="hdName"></b><small id="hdRole"></small></span><svg class="ico" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="menu hidden" id="meMenu"><div class="mhd"><b id="mnName"></b><span id="mnRole"></span></div>
+          <a href="#" id="opBtn"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>เปลี่ยนผู้ปฏิบัติงาน</a><a href="#" id="logoutBtn"><svg class="ico" viewBox="0 0 24 24"><path d="M15 4h3.5a1.5 1.5 0 0 1 1.5 1.5v13a1.5 1.5 0 0 1-1.5 1.5H15"/><path d="M10 8l-4 4 4 4M6 12h10"/></svg>ออกจากระบบ</a></div></div>
+    </header>
+    <main id="page"></main>
+  </div>
 </section>
 
 <div id="modalRoot"></div>
@@ -209,19 +412,23 @@ const baht = n => Number(n || 0).toLocaleString('th-TH', {minimumFractionDigits:
 const num = n => Number(n || 0).toLocaleString('th-TH');
 
 const ROLE = {ADMIN:'ทีม ADMIN', KHON:'ทีมอาคารโขน', FINANCE:'ทีมการเงิน'};
-const STATUS = {SCHEDULED:'รอส่งมอบ', RECEIVED:'ตรวจรับแล้ว · รอการเงิน', RETURNED:'การเงินส่งกลับแก้ไข',
-  VERIFIED:'ตรวจสอบแล้ว · รอจ่าย', PAID:'จ่ายเงินแล้ว', CANCELLED:'ยกเลิก'};
+const STATUS = {SCHEDULED:'รอส่งมอบ', RECEIVED:'ตรวจรับแล้ว · รอจ่าย', PAID:'จ่ายเงินแล้ว', CANCELLED:'ยกเลิก'};
+/* ADMIN = ทำได้ทุกอย่าง + ตั้งค่าหลังบ้าน | KHON = ใส่ข้อมูลคณะ | FINANCE = ตรวจรับ + จ่ายเงินร้าน */
 const CAN = {
-  ADMIN:   {create:1, receive:1, verify:1, pay:1, money:1},
-  KHON:    {receive:1},
-  FINANCE: {verify:1, pay:1, money:1}
+  ADMIN:   {create:1, price:1, receive:1, pay:1, money:1, admin:1},
+  KHON:    {create:1},
+  FINANCE: {receive:1, pay:1, money:1}
 };
 const TABS = {
-  ADMIN:   [['today','วันนี้'],['orders','รายการ'],['receive','ตรวจรับ'],['finance','ตรวจ/จ่าย'],['summary','สรุป'],['vendors','ร้านค้า'],['users','บัญชี'],['logs','Log']],
-  KHON:    [['today','วันนี้'],['receive','ตรวจรับ'],['orders','ตารางส่ง'],['summary','สรุป']],
-  FINANCE: [['today','วันนี้'],['finance','ตรวจ/จ่าย'],['orders','รายการ'],['summary','สรุป']]
+  ADMIN:   [['today','วันนี้'],['orders','รายการคณะ'],['receive','ตรวจรับ'],['pay','จ่ายเงิน'],['summary','สรุป'],['vendors','ร้านค้า'],['users','บัญชี'],['logs','Log']],
+  KHON:    [['today','วันนี้'],['orders','รายการคณะ']],
+  FINANCE: [['today','วันนี้'],['receive','ตรวจรับ'],['pay','จ่ายเงิน'],['orders','รายการคณะ'],['summary','สรุป']]
 };
-const ICON = {today:'📅', orders:'📋', receive:'📷', finance:'💰', summary:'📊', vendors:'🏪', users:'👥', logs:'🕘'};
+const IC = {"today": "<rect x=\"3.5\" y=\"5\" width=\"17\" height=\"15.5\" rx=\"2.5\"/><path d=\"M3.5 10h17M8 3v4M16 3v4\"/>", "orders": "<path d=\"M9 6.5h11M9 12h11M9 17.5h11\"/><circle cx=\"4.6\" cy=\"6.5\" r=\"1.1\"/><circle cx=\"4.6\" cy=\"12\" r=\"1.1\"/><circle cx=\"4.6\" cy=\"17.5\" r=\"1.1\"/>", "receive": "<path d=\"M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z\"/><circle cx=\"12\" cy=\"13.5\" r=\"3.5\"/>", "pay": "<rect x=\"2.5\" y=\"6\" width=\"19\" height=\"12\" rx=\"2.5\"/><circle cx=\"12\" cy=\"12\" r=\"2.6\"/><path d=\"M6 9.5v5M18 9.5v5\"/>", "summary": "<path d=\"M4 4v16h16\"/><path d=\"M8.5 16v-4.5M12.5 16V8M16.5 16v-6\"/>", "vendors": "<path d=\"M4.5 10.5V20h15v-9.5\"/><path d=\"M3 10l2.2-6h13.6L21 10\"/><path d=\"M3 10a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0\"/><path d=\"M10 20v-5h4v5\"/>", "users": "<circle cx=\"9\" cy=\"8\" r=\"3.5\"/><path d=\"M2.5 20a6.5 6.5 0 0 1 13 0\"/><path d=\"M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14a6.5 6.5 0 0 1 3.5 6\"/>", "logs": "<path d=\"M3.5 12a8.5 8.5 0 1 0 2.6-6.1L3.5 8.5\"/><path d=\"M3.5 3.5v5h5\"/><path d=\"M12 7.5V12l3 2\"/>", "bell": "<path d=\"M6 16v-5a6 6 0 1 1 12 0v5l1.5 2h-15z\"/><path d=\"M10 20.5a2 2 0 0 0 4 0\"/>", "plus": "<path d=\"M12 5v14M5 12h14\"/>", "edit": "<path d=\"M4 20h4L19.5 8.5l-4-4L4 16z\"/><path d=\"M13.5 6.5l4 4\"/>", "check": "<path d=\"M5 12.5l4.5 4.5L19 7.5\"/>", "eye": "<path d=\"M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/>", "print": "<path d=\"M7 9V3.5h10V9\"/><rect x=\"3\" y=\"9\" width=\"18\" height=\"8\" rx=\"2\"/><path d=\"M7 14h10v6.5H7z\"/>", "download": "<path d=\"M12 4v11M7 10l5 5 5-5\"/><path d=\"M4 20h16\"/>", "copy": "<rect x=\"8\" y=\"8\" width=\"12\" height=\"12\" rx=\"2\"/><path d=\"M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3\"/>", "alert": "<path d=\"M12 3.5 21.5 20h-19z\"/><path d=\"M12 10v4.5M12 17.2v.3\"/>", "logout": "<path d=\"M15 4h3.5a1.5 1.5 0 0 1 1.5 1.5v13a1.5 1.5 0 0 1-1.5 1.5H15\"/><path d=\"M10 8l-4 4 4 4M6 12h10\"/>", "user": "<circle cx=\"12\" cy=\"8\" r=\"4\"/><path d=\"M4 21a8 8 0 0 1 16 0\"/>", "chev": "<path d=\"M6 9l6 6 6-6\"/>", "x": "<path d=\"M6 6l12 12M18 6 6 18\"/>", "trash": "<path d=\"M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13\"/>", "info": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 11v5M12 8v.3\"/>"};
+const ic = (n, c = "") => `<svg class="ico ${c}" viewBox="0 0 24 24" aria-hidden="true">${IC[n] || ""}</svg>`;
+
+const RECV = ['SCHEDULED','RETURNED'], PAYABLE = ['RECEIVED','VERIFIED'];   // RETURNED/VERIFIED = ข้อมูลรุ่นเก่า
+const canEdit = o => can('create') && (S.user.role === 'ADMIN' ? !['PAID','CANCELLED'].includes(o.status) : o.status === 'SCHEDULED');
 const S = {token:null, user:null, orders:[], vendors:[], tab:'today', month:today().slice(0,7), status:'ALL'};
 const can = k => !!(CAN[S.user?.role] || {})[k];
 const st = s => `<span class="st st-${s}">${STATUS[s] || s}</span>`;
@@ -275,7 +482,7 @@ const Mock = (() => {
   ];
   const orders = [], photos = [], logs = [];
   const demoImg = (t) => 'data:image/svg+xml;utf8,' + encodeURIComponent(
-    `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><rect width="400" height="400" fill="#dbeafe"/><text x="200" y="190" font-size="90" text-anchor="middle">🍱</text><text x="200" y="260" font-size="22" text-anchor="middle" fill="#1d4ed8" font-family="sans-serif">${t}</text></svg>`);
+    `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><rect width="400" height="400" fill="#dbeafe"/><text x="200" y="190" font-size="90" text-anchor="middle">▦</text><text x="200" y="260" font-size="22" text-anchor="middle" fill="#1d4ed8" font-family="sans-serif">${t}</text></svg>`);
   const calc = o => { const b = billBoxes(o); o.total_amount = b*o.price_per_box; o.foundation_amount = b*o.foundation_per_box; o.vendor_amount = o.total_amount - o.foundation_amount; };
   const log = (u, action, id, detail) => logs.push({timestamp:ts(), username:u.username, operator:u.operator, display_name:u.display_name, role:u.role, action, order_id:id||'', detail: typeof detail === 'string' ? detail : JSON.stringify(detail)});
   const view = o => { const x = {...o}; if (me.role === 'KHON') MONEY.forEach(k => delete x[k]); return x; };
@@ -283,12 +490,13 @@ const Mock = (() => {
 
   // ข้อมูลตัวอย่าง
   const A = {...users[0], operator:'สมชาย ใจดี'}, K = {...users[1], operator:'วิภา รักงาน'}, F = {...users[2], operator:'กมล ละเอียด'};
+  const allow = (...roles) => { if (!roles.includes(me.role)) throw new Error('สิทธิ์ของคุณทำรายการนี้ไม่ได้'); };
   const seed = [
     [-12,'คณะครูโรงเรียนบ้านหนองบัว','V001',45,'ข้าวกะเพราไก่ไข่ดาว + น้ำดื่ม','PAID'],
     [-9,'คณะนักศึกษามหาวิทยาลัยราชภัฏ','V002',60,'ข้าวผัดปู + ผลไม้','PAID'],
-    [-7,'คณะผู้สูงอายุ อบต.ท่าข้าม','V003',30,'ข้าวต้มปลา + ขนมไทย','VERIFIED'],
+    [-7,'คณะผู้สูงอายุ อบต.ท่าข้าม','V003',30,'ข้าวต้มปลา + ขนมไทย','RECEIVED'],
     [-5,'คณะข้าราชการกรมศิลปากร','V001',25,'ข้าวหมูกระเทียม + น้ำผลไม้','RECEIVED'],
-    [-3,'คณะนักเรียน ร.ร.วัดสุทธิ','V003',80,'ข้าวไข่เจียวหมูสับ + นม','RETURNED'],
+    [-3,'คณะนักเรียน ร.ร.วัดสุทธิ','V003',80,'ข้าวไข่เจียวหมูสับ + นม','SHORT'],
     [-1,'คณะอาสาสมัครสาธารณสุข','V002',40,'ข้าวมันไก่ + ซุป','RECEIVED'],
     [0,'คณะนักเรียนโรงเรียนสตรีวิทยา','V001',120,'ข้าวผัดกะเพราหมู + ไข่ต้ม + น้ำดื่ม','SCHEDULED','11:30'],
     [0,'คณะผู้บริหารสถานทูต (VIP)','V002',18,'ข้าวหน้าเป็ด + ต้มยำกุ้ง + ผลไม้','SCHEDULED','12:00'],
@@ -302,16 +510,14 @@ const Mock = (() => {
       vendor_id:vid, vendor_name:v.name, menu, boxes, price_per_box:v.default_price, foundation_per_box:v.default_foundation,
       note:'', status:'SCHEDULED', received_at:'', received_boxes:'', receive_note:'', received_by:'', received_saved_at:'',
       verified_at:'', verified_by:'', verify_note:'', paid_at:'', paid_by:'', pay_ref:'', cancel_reason:'',
-      created_at:addDays(d-7) + 'T09:00:00', created_by:who(A)};
-    calc(o); orders.push(o); log(A, 'สร้างรายการ', o.id, {group:g, boxes});
+      created_at:addDays(d-7) + 'T09:00:00', created_by:who(K)};
+    calc(o); orders.push(o); log(K, 'สร้างรายการ', o.id, {group:g, boxes});
     if (status !== 'SCHEDULED') {
-      photos.push({id:'PH'+(seq++), order_id:o.id, kind:'delivery', url:demoImg('รูปส่งมอบ'), file_name:'demo.jpg', uploaded_at:o.service_date+'T11:20:00', uploaded_by:who(K)});
-      const rb = status === 'RETURNED' ? boxes - 2 : boxes;
-      Object.assign(o, {status:'RECEIVED', received_at:o.service_date + 'T11:15', received_boxes:rb, received_by:who(K), received_saved_at:o.service_date + 'T11:22:00'});
-      calc(o); log(K, 'ตรวจรับข้าวกล่อง', o.id, {received:rb});
+      photos.push({id:'PH'+(seq++), order_id:o.id, kind:'delivery', url:demoImg('รูปส่งมอบ'), file_name:'demo.jpg', uploaded_at:o.service_date+'T11:20:00', uploaded_by:who(F)});
+      const rb = status === 'SHORT' ? boxes - 2 : boxes;
+      Object.assign(o, {status:'RECEIVED', received_at:o.service_date + 'T11:15', received_boxes:rb, receive_note: rb !== boxes ? 'ร้านส่งขาด 2 กล่อง' : '', received_by:who(F), received_saved_at:o.service_date + 'T11:22:00'});
+      calc(o); log(F, 'ตรวจรับข้าวกล่อง', o.id, {received:rb});
     }
-    if (status === 'RETURNED') { o.status = 'RETURNED'; o.verify_note = 'จำนวนกล่องไม่ตรงกับใบส่งของ (ใบส่งของ 80 กล่อง) กรุณาตรวจสอบและแนบรูปใบส่งของเพิ่ม'; log(F, 'การเงินส่งกลับแก้ไข', o.id, {note:o.verify_note}); }
-    if (status === 'VERIFIED' || status === 'PAID') { Object.assign(o, {status:'VERIFIED', verified_at:o.service_date + 'T15:00:00', verified_by:who(F)}); log(F, 'การเงินตรวจสอบผ่าน', o.id, ''); }
     if (status === 'PAID') { Object.assign(o, {status:'PAID', paid_at:addDays(d+3), paid_by:who(F), pay_ref:'PV-' + (seq++)}); log(F, 'บันทึกจ่ายเงิน', o.id, ''); }
   });
 
@@ -330,13 +536,19 @@ const Mock = (() => {
         .sort((a,b) => (a.service_date + a.service_time).localeCompare(b.service_date + b.service_time)).map(view);
     },
     saveOrder(p) {
-      if (me.role !== 'ADMIN') throw new Error('สิทธิ์ไม่พอ');
+      allow('ADMIN','KHON');
       if (!p.group_name || !p.service_date || !p.vendor_id || !(Number(p.boxes) > 0)) throw new Error('กรุณากรอก วันที่ / ชื่อคณะ / ร้าน / จำนวนกล่อง ให้ครบ');
       const v = vendors.find(x => x.id === p.vendor_id);
       const keys = ['service_date','service_time','group_name','group_size','vendor_id','menu','boxes','price_per_box','foundation_per_box','note'];
+      const old = p.id ? must(p.id) : null;
+      if (me.role !== 'ADMIN') {   // KHON ไม่กำหนดราคา: ใช้ค่ามาตรฐานของร้าน
+        const keep = old && old.vendor_id === p.vendor_id;
+        p.price_per_box = keep ? old.price_per_box : v.default_price; p.foundation_per_box = keep ? old.foundation_per_box : v.default_foundation;
+      }
       ['boxes','group_size','price_per_box','foundation_per_box'].forEach(k => p[k] = Number(p[k] || 0));
       if (p.id) {
-        const o = must(p.id); if (['PAID','CANCELLED'].includes(o.status)) throw new Error('แก้ไขไม่ได้');
+        const o = old; if (['PAID','CANCELLED'].includes(o.status)) throw new Error('แก้ไขไม่ได้');
+        if (me.role === 'KHON' && o.status !== 'SCHEDULED') throw new Error('ตรวจรับแล้ว แก้ไขไม่ได้ กรุณาติดต่อ ADMIN');
         const diff = {}; keys.forEach(k => { if (String(p[k]) !== String(o[k])) { diff[k] = [o[k], p[k]]; o[k] = p[k]; } });
         o.vendor_name = v.name; o.updated_at = ts(); o.updated_by = who(me); calc(o); log(me, 'แก้ไขรายการ', o.id, diff); return view(o);
       }
@@ -344,34 +556,34 @@ const Mock = (() => {
       keys.forEach(k => o[k] = p[k]); o.vendor_name = v.name; calc(o); orders.push(o);
       log(me, 'สร้างรายการ', o.id, {group:o.group_name, date:o.service_date, boxes:o.boxes}); return view(o);
     },
-    cancelOrder(p) { const o = must(p.id); if (!p.reason) throw new Error('กรุณาระบุเหตุผล'); const f = o.status; o.status = 'CANCELLED'; o.cancel_reason = p.reason; log(me, 'ยกเลิกรายการ', o.id, {from:f, reason:p.reason}); return view(o); },
+    cancelOrder(p) { allow('ADMIN','KHON'); const o = must(p.id); if (o.status === 'PAID') throw new Error('จ่ายแล้ว ยกเลิกไม่ได้'); if (me.role === 'KHON' && o.status !== 'SCHEDULED') throw new Error('ตรวจรับแล้ว ยกเลิกไม่ได้ กรุณาติดต่อ ADMIN'); if (!p.reason) throw new Error('กรุณาระบุเหตุผล'); const f = o.status; o.status = 'CANCELLED'; o.cancel_reason = p.reason; log(me, 'ยกเลิกรายการ', o.id, {from:f, reason:p.reason}); return view(o); },
     uploadPhoto(p) {
       const o = must(p.order_id);
-      if (p.kind !== 'payment' && me.role === 'FINANCE') throw new Error('ทีมการเงินแนบได้เฉพาะหลักฐานการจ่าย');
+      allow('ADMIN','FINANCE');
       const x = {id:'PH' + (seq++), order_id:o.id, kind:p.kind || 'delivery', url:'data:' + p.mime + ';base64,' + p.data, file_name:p.name, uploaded_at:ts(), uploaded_by:who(me)};
       photos.push(x); log(me, x.kind === 'payment' ? 'แนบหลักฐานการจ่าย' : 'แนบรูปส่งมอบ', o.id, {file:p.name}); return x;
     },
     listPhotos(p) { return photos.filter(x => x.order_id === p.order_id); },
     receiveOrder(p) {
-      const o = must(p.id); if (!['SCHEDULED','RETURNED'].includes(o.status)) throw new Error('รายการนี้ตรวจรับไปแล้ว');
+      allow('ADMIN','FINANCE');
+      const o = must(p.id); if (!['SCHEDULED','RETURNED','RECEIVED','VERIFIED'].includes(o.status)) throw new Error('รายการนี้แก้ไขการตรวจรับไม่ได้แล้ว');
       if (!p.received_at) throw new Error('กรุณาระบุวันที่และเวลาส่งมอบ');
       if (!photos.some(x => x.order_id === o.id && x.kind === 'delivery')) throw new Error('กรุณาแนบรูปถ่ายหลักฐานอย่างน้อย 1 รูป');
       const f = o.status;
       Object.assign(o, {status:'RECEIVED', received_at:p.received_at, received_boxes:Number(p.received_boxes), receive_note:p.receive_note || '', received_by:who(me), received_saved_at:ts()});
-      calc(o); log(me, f === 'RETURNED' ? 'ตรวจรับ (แก้ไขตามที่การเงินส่งกลับ)' : 'ตรวจรับข้าวกล่อง', o.id, {received_at:p.received_at, ordered:o.boxes, received:o.received_boxes, note:p.receive_note || ''});
+      calc(o); log(me, f === 'SCHEDULED' ? 'ตรวจรับข้าวกล่อง' : 'แก้ไขการตรวจรับ', o.id, {received_at:p.received_at, ordered:o.boxes, received:o.received_boxes, note:p.receive_note || ''});
       return view(o);
     },
-    verifyOrder(p) { const o = must(p.id); if (o.status !== 'RECEIVED') throw new Error('สถานะไม่ถูกต้อง'); Object.assign(o, {status:'VERIFIED', verified_at:ts(), verified_by:who(me), verify_note:p.note || ''}); log(me, 'การเงินตรวจสอบผ่าน', o.id, {total:o.total_amount}); return view(o); },
-    returnOrder(p) { const o = must(p.id); if (!p.note) throw new Error('กรุณาระบุสิ่งที่ต้องแก้ไข'); Object.assign(o, {status:'RETURNED', verify_note:p.note}); log(me, 'การเงินส่งกลับแก้ไข', o.id, {note:p.note}); return view(o); },
-    payOrder(p) { const o = must(p.id); if (o.status !== 'VERIFIED') throw new Error('สถานะไม่ถูกต้อง'); if (!p.paid_at) throw new Error('กรุณาระบุวันที่จ่าย'); Object.assign(o, {status:'PAID', paid_at:p.paid_at, pay_ref:p.pay_ref || '', paid_by:who(me)}); log(me, 'บันทึกจ่ายเงิน', o.id, {paid_at:p.paid_at, ref:p.pay_ref}); return view(o); },
+    payOrder(p) { allow('ADMIN','FINANCE'); const o = must(p.id); if (!PAYABLE.includes(o.status)) throw new Error('สถานะไม่ถูกต้อง'); if (!p.paid_at) throw new Error('กรุณาระบุวันที่จ่าย'); Object.assign(o, {status:'PAID', paid_at:p.paid_at, pay_ref:p.pay_ref || '', paid_by:who(me)}); log(me, 'บันทึกจ่ายเงิน', o.id, {paid_at:p.paid_at, ref:p.pay_ref}); return view(o); },
     listLogs(p) { let r = logs; if (p.order_id) r = r.filter(x => x.order_id === p.order_id); else if (me.role !== 'ADMIN') throw new Error('สิทธิ์ไม่พอ'); return r.slice(-300).reverse(); },
     saveVendor(p) {
+      allow('ADMIN');
       if (p.id) { const v = vendors.find(x => x.id === p.id); Object.assign(v, p); log(me, 'แก้ไขร้านค้า', '', {name:v.name}); return v; }
       const v = {...p, id:'V' + (seq++)}; vendors.push(v); log(me, 'เพิ่มร้านค้า', '', {name:v.name}); return v;
     },
-    listUsers() { return users.map(u => { const x = {...u}; delete x.password; return x; }); },
+    listUsers() { allow('ADMIN'); return users.map(u => { const x = {...u}; delete x.password; return x; }); },
     saveUser(p) {
-      if (p.password && p.password.length < 6) throw new Error('รหัสผ่านอย่างน้อย 6 ตัวอักษร');
+      allow('ADMIN'); if (p.password && p.password.length < 6) throw new Error('รหัสผ่านอย่างน้อย 6 ตัวอักษร');
       let u = users.find(x => x.username === p.username);
       if (u) { if (u.username === me.username && (p.role !== 'ADMIN' || !p.active)) throw new Error('ห้ามลดสิทธิ์/ปิดบัญชีที่กำลังใช้อยู่');
         Object.assign(u, {display_name:p.display_name, role:p.role, email:p.email, active:p.active, updated_at:ts()});
@@ -404,12 +616,18 @@ async function boot() {
   const d = await api('bootstrap', {month:S.month});
   S.user = d.user; S.vendors = d.vendors; S.orders = d.orders;
   $('#loginView').classList.add('hidden'); $('#appView').classList.remove('hidden');
-  $('#hdName').textContent = S.user.operator;
-  $('#hdRole').textContent = ROLE[S.user.role] + ' · ' + S.user.username; $('#hdRole').className = 'badge role-' + S.user.role;
+  setWho(); $('#hdRole').className = 'badge role-' + S.user.role;
   $('#hdDate').textContent = thDateLong(today());
-  S.tab = 'today'; renderTabs(); render();
+  S.tab = 'today'; renderTabs(); render(); window.scrollTo(0, 0);
   const key = 'lb_pop_' + S.user.username + '_' + today();
   if (todays().length && !store.get(key)) showTodayPopup();
+}
+function initial(n) { return ([...String(n || '')].find(c => /[ก-ฮA-Za-z0-9]/.test(c)) || '?').toUpperCase(); }
+function setWho() {
+  const u = S.user;
+  $('#hdName').textContent = u.operator; $('#mnName').textContent = u.operator;
+  $('#hdRole').textContent = ROLE[u.role]; $('#mnRole').textContent = `${ROLE[u.role]} (บัญชี ${u.username})`;
+  $('#hdAv').textContent = initial(u.operator);
 }
 async function reload() { S.orders = await api('listOrders', {month:S.month}); render(); }
 
@@ -422,80 +640,91 @@ const byId = id => S.orders.find(o => o.id === id);
 function renderTabs() {
   $('#tabs').innerHTML = TABS[S.user.role].map(([k, t]) => {
     let n = '';
-    if (k === 'receive') { const c = S.orders.filter(o => ['SCHEDULED','RETURNED'].includes(o.status) && o.service_date <= today()).length; if (c) n = ` (${c})`; }
-    if (k === 'finance') { const c = S.orders.filter(o => o.status === 'RECEIVED').length; if (c) n = ` (${c})`; }
-    return `<button data-tab="${k}" class="${S.tab === k ? 'on' : ''}"><i>${ICON[k]}</i>${t}${n}</button>`;
+    if (k === 'receive') { const c = S.orders.filter(o => RECV.includes(o.status) && o.service_date <= today()).length; if (c) n = `<span class="cnt">${c}</span>`; }
+    if (k === 'pay') { const c = S.orders.filter(o => PAYABLE.includes(o.status)).length; if (c) n = `<span class="cnt">${c}</span>`; }
+    return `<button data-tab="${k}" class="${S.tab === k ? 'on' : ''}"${S.tab === k ? ' aria-current="page"' : ''}>${ic(k)}<span>${t}</span>${n}</button>`;
   }).join('');
   const t = todays().filter(o => o.status === 'SCHEDULED').length;
   $('#bellN').textContent = todays().length; $('#bellN').classList.toggle('hidden', !todays().length);
 }
 function render() {
   renderTabs();
-  const P = {today:pToday, orders:pOrders, receive:pReceive, finance:pFinance, summary:pSummary, vendors:pVendors, users:pUsers, logs:pLogs};
+  const P = {today:pToday, orders:pOrders, receive:pReceive, pay:pPay, summary:pSummary, vendors:pVendors, users:pUsers, logs:pLogs};
   P[S.tab]();
 }
 
 function orderCard(o, opts = {}) {
-  const late = ['SCHEDULED','RETURNED'].includes(o.status) && o.service_date < today();
+  const late = RECV.includes(o.status) && o.service_date < today() && can('receive');
+  const short = o.received_boxes !== '' && o.received_boxes != null && Number(o.received_boxes) !== Number(o.boxes);
   const money = can('money') ? `<div class="money">
       <div>ยอดเงิน<b>${baht(o.total_amount)}</b></div>
       <div>มูลนิธิได้<b>${baht(o.foundation_amount)}</b></div>
       <div>จ่ายร้าน<b>${baht(o.vendor_amount)}</b></div></div>` : '';
   const btns = [];
-  if (can('receive') && ['SCHEDULED','RETURNED'].includes(o.status)) btns.push(`<button class="btn p sm" data-act="receive" data-id="${o.id}">📷 ตรวจรับ</button>`);
-  if (can('verify') && o.status === 'RECEIVED') btns.push(`<button class="btn p sm" data-act="detail" data-id="${o.id}">ตรวจสอบ</button>`);
-  if (can('pay') && o.status === 'VERIFIED') btns.push(`<button class="btn ok sm" data-act="pay" data-id="${o.id}">บันทึกจ่าย</button>`);
   btns.push(`<button class="btn sm" data-act="detail" data-id="${o.id}">รายละเอียด</button>`);
-  return `<div class="oc ${late ? 'late' : ''}">
-    <div class="row"><h4 class="sp">${esc(o.group_name)}</h4>${st(o.status)}</div>
-    <div class="small mute">${opts.date ? thDate(o.service_date) + ' · ' : ''}เวลา ${esc(o.service_time)} น. · ${esc(o.id)}${late ? ' · <b style="color:var(--bad)">เลยกำหนดยังไม่ตรวจรับ</b>' : ''}</div>
-    <div class="meta"><span>ร้าน</span><span><b>${esc(o.vendor_name)}</b></span>
-      <span>จำนวน</span><span><b>${num(o.boxes)}</b> กล่อง${o.received_boxes !== '' && o.received_boxes != null && Number(o.received_boxes) !== Number(o.boxes) ? ` <span style="color:var(--bad)">(รับจริง ${num(o.received_boxes)})</span>` : ''}</span>
-      <span>เมนู</span><span>${esc(o.menu)}</span>
-      ${o.received_at ? `<span>ส่งมอบ</span><span>${thDT(o.received_at)} · ${esc(o.received_by)}</span>` : ''}
-      ${o.status === 'RETURNED' ? `<span style="color:var(--bad)">ต้องแก้</span><span style="color:var(--bad)">${esc(o.verify_note)}</span>` : ''}
-    </div>${money}
-    <div class="row" style="margin-top:10px;justify-content:flex-end">${btns.join('')}</div></div>`;
+  if (canEdit(o) && !can('receive')) btns.push(`<button class="btn sm" data-act="edit" data-id="${o.id}">${ic('edit')}แก้ไข</button>`);
+  if (can('receive') && RECV.includes(o.status)) btns.push(`<button class="btn p sm" data-act="receive" data-id="${o.id}">${ic('receive')}ตรวจรับ</button>`);
+  if (can('pay') && PAYABLE.includes(o.status)) btns.push(`<button class="btn ok sm" data-act="pay" data-id="${o.id}">${ic('pay')}บันทึกจ่าย</button>`);
+  return `<article class="oc ${late ? 'late' : ''}">
+    <div class="oc-h"><div><h4>${esc(o.group_name)}</h4>
+      <div class="oc-sub">${opts.date ? thDate(o.service_date) + ' เวลา ' : 'เวลา '}${esc(o.service_time)} น. รหัส ${esc(o.id)}${late ? ' <span class="late-t">เลยกำหนด ยังไม่ตรวจรับ</span>' : ''}</div></div>${st(o.status)}</div>
+    <div class="oc-b"><div class="oc-qty"><b>${num(short ? o.received_boxes : o.boxes)}</b><span>กล่อง</span>${short ? `<em>สั่ง ${num(o.boxes)}</em>` : ''}</div>
+      <dl><dt>ร้าน</dt><dd><b>${esc(o.vendor_name)}</b></dd><dt>เมนู</dt><dd>${esc(o.menu)}</dd>
+      ${o.group_size ? `<dt>ผู้มาเยือน</dt><dd>${num(o.group_size)} คน</dd>` : ''}
+      ${o.received_at ? `<dt>ส่งมอบ</dt><dd>${thDT(o.received_at)}<div class="small mute">${esc(o.received_by)}</div></dd>` : ''}</dl></div>
+    ${money}
+    <div class="oc-f">${btns.join('')}</div></article>`;
 }
 
 function pToday() {
-  const t = todays();
-  const r = S.user.role;
-  let extra = '';
-  if (r === 'FINANCE' || r === 'ADMIN') {
-    const pv = S.orders.filter(o => o.status === 'RECEIVED').length, pp = S.orders.filter(o => o.status === 'VERIFIED');
-    extra = `<div class="kpis">
-      <div class="kpi"><div class="l">รอการเงินตรวจสอบ</div><div class="v">${pv}</div></div>
-      <div class="kpi"><div class="l">ตรวจแล้ว รอจ่าย</div><div class="v">${pp.length}</div></div>
-      <div class="kpi gold"><div class="l">ยอดรอจ่ายร้านค้า</div><div class="v">${baht(pp.reduce((s,o) => s + Number(o.vendor_amount||0), 0))}</div></div></div>`;
+  const t = todays(), d = new Date();
+  const boxes = t.reduce((s,o) => s + billBoxes(o), 0), amt = t.reduce((s,o) => s + Number(o.total_amount || 0), 0);
+  let side = '';
+  if (can('receive')) {
+    const late = S.orders.filter(o => RECV.includes(o.status) && o.service_date < today());
+    const pp = S.orders.filter(o => PAYABLE.includes(o.status));
+    side = `${late.length ? `<div class="alert">${ic('alert')}<div>มี <b>${late.length}</b> รายการเลยวันส่งแล้วแต่ยังไม่ได้ตรวจรับ <a href="#" data-goto="receive">ไปที่ตรวจรับ</a></div></div>` : ''}
+      <div class="panel"><h4>งานของการเงิน</h4>
+        <div class="stat"><span>ต้องตรวจรับวันนี้</span><b>${t.filter(o => RECV.includes(o.status)).length}</b></div>
+        <div class="stat"><span>ตรวจรับแล้ว รอจ่าย</span><b>${pp.length}</b></div>
+        <div class="stat"><span>ยอดรอจ่ายร้านค้า</span><b class="g">${baht(pp.reduce((s,o) => s + Number(o.vendor_amount || 0), 0))}</b></div></div>`;
   }
-  if (r === 'KHON' || r === 'ADMIN') {
-    const late = S.orders.filter(o => ['SCHEDULED','RETURNED'].includes(o.status) && o.service_date < today());
-    if (late.length) extra += `<div class="card" style="border-color:#f3c4c4;background:#fff6f6;margin-bottom:14px">⚠️ มี <b>${late.length}</b> รายการเลยวันส่งแล้วแต่ยังไม่ได้ตรวจรับ / ต้องแก้ไข — ดูที่แท็บ <a href="#" data-goto="receive">ตรวจรับ</a></div>`;
-  }
+  if (can('create') && !can('receive')) side = `<div class="panel" style="padding:18px 20px"><h4 style="margin-top:0">มีคณะเยี่ยมชมใหม่?</h4>
+      <p class="small mute" style="margin:0 0 14px">บันทึกวันเวลา ร้าน เมนู และจำนวนกล่อง ระบบจะแจ้งเตือนทุกทีมในวันนั้น</p>
+      <button class="btn p wide" data-act="new">${ic('plus')}เพิ่มรายการคณะ</button></div>`;
+  if (S.user.role === 'ADMIN') side += `<div style="margin-top:14px"><button class="btn wide" data-act="new">${ic('plus')}เพิ่มรายการคณะ</button></div>`;
   const up = S.orders.filter(o => o.service_date > today() && o.service_date <= addDays(7) && o.status === 'SCHEDULED');
-  $('#page').innerHTML = `<h2>วันนี้ · ${thDateLong(today())}</h2>${extra}
-    ${t.length ? `<div class="kpis"><div class="kpi gold"><div class="l">คณะวันนี้</div><div class="v">${t.length} คณะ</div></div>
-      <div class="kpi"><div class="l">ข้าวกล่องรวม</div><div class="v">${num(t.reduce((s,o) => s + Number(o.boxes), 0))} กล่อง</div></div>
-      ${can('money') ? `<div class="kpi"><div class="l">ยอดเงินวันนี้</div><div class="v">${baht(t.reduce((s,o) => s + Number(o.total_amount||0), 0))}</div></div>
-      <div class="kpi"><div class="l">มูลนิธิได้วันนี้</div><div class="v">${baht(t.reduce((s,o) => s + Number(o.foundation_amount||0), 0))}</div></div>` : ''}</div>
-      <div class="grid g2">${t.map(o => orderCard(o)).join('')}</div>` : '<div class="empty">วันนี้ไม่มีการส่งข้าวกล่อง</div>'}
+  const groups = {}; up.forEach(o => (groups[o.service_date] = groups[o.service_date] || []).push(o));
+  $('#page').innerHTML = `
+    <section class="today-head">
+      <div class="dayno">${d.getDate()}</div>
+      <div><div class="dayname">${d.toLocaleDateString('th-TH', {weekday:'long'})}</div><div class="daymonth">${d.toLocaleDateString('th-TH', {month:'long', year:'numeric'})}</div></div>
+      <p class="today-sum">${t.length ? `วันนี้ส่งข้าวกล่อง <b>${t.length}</b> คณะ รวม <b>${num(boxes)}</b> กล่อง${can('money') ? ` ยอดเงิน <b>${baht(amt)}</b> บาท` : ''}` : 'วันนี้ไม่มีการส่งข้าวกล่อง'}</p>
+    </section>
+    <div class="today-grid">
+      <div class="timeline">${t.length ? t.map(o => `<div class="tl-item"><div class="tl-time">${esc(o.service_time)}<small>น.</small></div><div class="tl-dot"></div>${orderCard(o)}</div>`).join('')
+        : '<div class="empty">ไม่มีคณะเยี่ยมชมที่ต้องรับข้าวกล่องวันนี้</div>'}</div>
+      <aside class="today-side">${side}</aside>
+    </div>
     <h3>7 วันข้างหน้า</h3>
-    ${up.length ? `<div class="grid g2">${up.map(o => orderCard(o, {date:1})).join('')}</div>` : '<div class="empty">ยังไม่มีรายการ</div>'}`;
+    ${up.length ? Object.entries(groups).map(([dt, l]) => `<div class="up"><div class="up-date"><b>${toD(dt).getDate()}</b><span>${toD(dt).toLocaleDateString('th-TH', {weekday:'short'})} ${toD(dt).toLocaleDateString('th-TH', {month:'short'})}</span></div>
+      <div>${l.map(o => `<div class="up-row" data-act="detail" data-id="${o.id}"><span class="t">${esc(o.service_time)}</span>
+        <span class="g"><b>${esc(o.group_name)}</b><span>${esc(o.vendor_name)}</span></span><span class="s">${st(o.status)}</span><span class="q">${num(o.boxes)} <small>กล่อง</small></span></div>`).join('')}</div></div>`).join('')
+      : '<div class="empty">ยังไม่มีรายการใน 7 วันข้างหน้า</div>'}`;
 }
 
 function monthBar() {
-  return `<div class="row noprint" style="margin-bottom:12px">
-    <button class="btn sm" data-mon="-1">‹</button><input type="month" id="monPick" value="${S.month}" style="width:auto">
-    <button class="btn sm" data-mon="1">›</button><b>${thMonth(S.month)}</b><span class="sp"></span></div>`;
+  return `<div class="monthbar noprint">
+    <button class="btn sm" data-mon="-1" aria-label="เดือนก่อน">‹</button><input type="month" id="monPick" value="${S.month}" style="width:auto;height:34px">
+    <button class="btn sm" data-mon="1" aria-label="เดือนถัดไป">›</button><b>${thMonth(S.month)}</b></div>`;
 }
 
 function pOrders() {
   let list = inMonth();
   if (S.status !== 'ALL') list = list.filter(o => o.status === S.status);
   const m = can('money');
-  $('#page').innerHTML = `<div class="row"><h2 class="sp">${S.user.role === 'KHON' ? 'ตารางส่งข้าวกล่อง' : 'รายการทั้งหมด'}</h2>
-      ${can('create') ? '<button class="btn p" data-act="new">+ เพิ่มรายการคณะ</button>' : ''}</div>
+  $('#page').innerHTML = `<div class="row"><h2 class="sp">รายการคณะเยี่ยมชม</h2>
+      ${can('create') ? `<button class="btn p" data-act="new">${ic('plus')}เพิ่มรายการคณะ</button>` : ''}</div>
     ${monthBar()}
     <div class="row" style="margin-bottom:12px"><select id="stFilter" style="width:auto">
       <option value="ALL">ทุกสถานะ</option>${Object.entries(STATUS).map(([k,v]) => `<option value="${k}" ${S.status === k ? 'selected' : ''}>${v}</option>`).join('')}</select>
@@ -509,19 +738,17 @@ function pOrders() {
 }
 
 function pReceive() {
-  const need = S.orders.filter(o => ['SCHEDULED','RETURNED'].includes(o.status) && o.service_date <= today());
-  const ret = need.filter(o => o.status === 'RETURNED'), due = need.filter(o => o.status === 'SCHEDULED');
+  const due = S.orders.filter(o => RECV.includes(o.status) && o.service_date <= today());
   const up = S.orders.filter(o => o.status === 'SCHEDULED' && o.service_date > today()).slice(0, 10);
   const done = S.orders.filter(o => o.received_at && o.received_at.slice(0,10) >= addDays(-7)).sort((a,b) => b.received_at.localeCompare(a.received_at));
   $('#page').innerHTML = `<h2>ตรวจรับข้าวกล่อง</h2>
-    ${ret.length ? `<h3 style="color:var(--bad)">การเงินส่งกลับให้แก้ไข (${ret.length})</h3><div class="grid g2">${ret.map(o => orderCard(o, {date:1})).join('')}</div>` : ''}
     <h3>ต้องตรวจรับ (${due.length})</h3>
-    ${due.length ? `<div class="grid g2">${due.map(o => orderCard(o, {date:1})).join('')}</div>` : '<div class="empty">ไม่มีรายการค้างตรวจรับ 👍</div>'}
+    ${due.length ? `<div class="grid g2">${due.map(o => orderCard(o, {date:1})).join('')}</div>` : '<div class="empty">ไม่มีรายการค้างตรวจรับ</div>'}
     <h3>กำลังจะมาถึง</h3>
     ${up.length ? `<div class="tw"><table><thead><tr><th>วันที่</th><th>เวลา</th><th>คณะ</th><th>ร้าน</th><th class="n">กล่อง</th><th>เมนู</th></tr></thead><tbody>
       ${up.map(o => `<tr class="click" data-act="detail" data-id="${o.id}"><td>${thDate(o.service_date)}</td><td>${esc(o.service_time)}</td><td>${esc(o.group_name)}</td><td>${esc(o.vendor_name)}</td><td class="n">${num(o.boxes)}</td><td class="small">${esc(o.menu)}</td></tr>`).join('')}
       </tbody></table></div>` : '<div class="empty">ยังไม่มีรายการ</div>'}
-    <h3>ตรวจรับแล้ว 7 วันล่าสุด</h3>
+    <h3>ตรวจรับแล้ว 7 วันล่าสุด <span class="small mute">(กดเพื่อดู/แก้ไขการตรวจรับก่อนจ่ายเงิน)</span></h3>
     ${done.length ? `<div class="tw"><table><thead><tr><th>ส่งมอบเมื่อ</th><th>คณะ</th><th class="n">รับจริง</th><th>ผู้บันทึก</th><th>สถานะ</th></tr></thead><tbody>
       ${done.map(o => `<tr class="click" data-act="detail" data-id="${o.id}"><td>${thDT(o.received_at)}</td><td>${esc(o.group_name)}</td><td class="n">${num(o.received_boxes)}/${num(o.boxes)}</td><td class="small">${esc(o.received_by)}</td><td>${st(o.status)}</td></tr>`).join('')}
       </tbody></table></div>` : '<div class="empty">-</div>'}`;
@@ -529,28 +756,27 @@ function pReceive() {
 
 function finTable(list, kind) {
   if (!list.length) return '<div class="empty">ไม่มีรายการ</div>';
-  return `<div class="tw"><table><thead><tr><th>วันที่ส่ง</th><th>คณะ</th><th>ร้าน</th><th class="n">สั่ง/รับจริง</th><th class="n">ยอดเงิน</th><th class="n">มูลนิธิ</th><th class="n">จ่ายร้าน</th><th>ผู้ตรวจรับ</th><th></th></tr></thead><tbody>
+  return `<div class="tw"><table><thead><tr><th>วันที่ส่ง</th><th>คณะ</th><th>ร้าน</th><th class="n">สั่ง/รับจริง</th><th class="n">ยอดเงิน</th><th class="n">มูลนิธิ</th><th class="n">จ่ายร้าน</th><th>${kind === 'pay' ? 'ผู้ตรวจรับ' : 'จ่ายเมื่อ'}</th><th></th></tr></thead><tbody>
     ${list.map(o => `<tr><td>${thDate(o.service_date)}</td><td><b>${esc(o.group_name)}</b><div class="small mute">${o.id}</div></td><td>${esc(o.vendor_name)}</td>
-      <td class="n">${num(o.boxes)}/${num(o.received_boxes)}${Number(o.boxes) !== Number(o.received_boxes) ? ' ⚠️' : ''}</td>
+      <td class="n">${num(o.boxes)}/${num(o.received_boxes)}${Number(o.boxes) !== Number(o.received_boxes) ? ' <span style="color:var(--bad)">●</span>' : ''}</td>
       <td class="n">${baht(o.total_amount)}</td><td class="n">${baht(o.foundation_amount)}</td><td class="n"><b>${baht(o.vendor_amount)}</b></td>
-      <td class="small">${esc(o.received_by)}<br>${thDT(o.received_at)}</td>
-      <td>${kind === 'verify' ? `<button class="btn p sm" data-act="detail" data-id="${o.id}">ตรวจสอบ</button>` :
-             kind === 'pay' ? `<button class="btn ok sm" data-act="pay" data-id="${o.id}">บันทึกจ่าย</button>` :
-             `<button class="btn sm" data-act="detail" data-id="${o.id}">ดู</button>`}</td></tr>`).join('')}
+      <td class="small">${kind === 'pay' ? `${esc(o.received_by)}<br>${thDT(o.received_at)}` : `${thDate(o.paid_at)}<br>${esc(o.pay_ref)}`}</td>
+      <td><div class="row" style="justify-content:flex-end;flex-wrap:nowrap"><button class="btn sm" data-act="detail" data-id="${o.id}">ดู</button>
+        ${kind === 'pay' ? `<button class="btn ok sm" data-act="pay" data-id="${o.id}">บันทึกจ่าย</button>` : ''}</div></td></tr>`).join('')}
     </tbody></table></div>`;
 }
-function pFinance() {
-  const rv = S.orders.filter(o => o.status === 'RECEIVED'), vp = S.orders.filter(o => o.status === 'VERIFIED'), rt = S.orders.filter(o => o.status === 'RETURNED');
+function pPay() {
+  const rp = S.orders.filter(o => PAYABLE.includes(o.status)), paid = inMonth().filter(o => o.status === 'PAID');
   const sum = (l, k) => l.reduce((s,o) => s + Number(o[k]||0), 0);
-  $('#page').innerHTML = `<h2>ตรวจสอบและจ่ายเงิน</h2>
-    <div class="kpis"><div class="kpi"><div class="l">รอตรวจสอบ</div><div class="v">${rv.length}</div><div class="small mute">${baht(sum(rv,'total_amount'))} บาท</div></div>
-      <div class="kpi"><div class="l">รอจ่าย</div><div class="v">${vp.length}</div><div class="small mute">จ่ายร้าน ${baht(sum(vp,'vendor_amount'))} บาท</div></div>
-      <div class="kpi"><div class="l">ส่งกลับแก้ไข</div><div class="v">${rt.length}</div></div></div>
-    <h3>① รอตรวจสอบหลักฐาน</h3>${finTable(rv, 'verify')}
-    <h3>② ตรวจสอบแล้ว · รอจ่ายเงิน</h3>${finTable(vp, 'pay')}
-    <h3>ส่งกลับให้ทีมอาคารโขนแก้ไข</h3>${rt.length ? finTable(rt, 'view') : '<div class="empty">ไม่มี</div>'}`;
+  const byV = {}; rp.forEach(o => { byV[o.vendor_name] = (byV[o.vendor_name] || 0) + Number(o.vendor_amount || 0); });
+  $('#page').innerHTML = `<h2>จ่ายเงินร้านค้า</h2>
+    <div class="kpis"><div class="kpi"><div class="l">รอจ่าย</div><div class="v">${rp.length} รายการ</div></div>
+      <div class="kpi gold"><div class="l">ยอดรอจ่ายร้าน</div><div class="v">${baht(sum(rp,'vendor_amount'))}</div></div>
+      <div class="kpi"><div class="l">มูลนิธิได้ (รายการรอจ่าย)</div><div class="v">${baht(sum(rp,'foundation_amount'))}</div></div></div>
+    ${Object.keys(byV).length ? `<div class="card small" style="margin-bottom:12px"><b>ยอดรอจ่ายแยกร้าน:</b> ${Object.entries(byV).map(([n,v]) => `${esc(n)} <b>${baht(v)}</b>`).join(' · ')}</div>` : ''}
+    <h3>ตรวจรับแล้ว · รอจ่ายเงิน</h3>${finTable(rp, 'pay')}
+    ${monthBar()}<h3>จ่ายแล้วในเดือนนี้ (${paid.length})</h3>${finTable(paid, 'paid')}`;
 }
-
 function pSummary() {
   const list = inMonth().filter(o => o.status !== 'CANCELLED');
   const m = can('money');
@@ -561,7 +787,7 @@ function pSummary() {
   const stc = {}; list.forEach(o => stc[o.status] = (stc[o.status] || 0) + 1);
   const maxB = Math.max(1, ...Object.values(vend).map(boxes));
   $('#page').innerHTML = `<div class="row"><h2 class="sp">สรุปภาพรวมรายเดือน</h2>
-      <button class="btn noprint" id="printBtn">🖨 พิมพ์</button>${m ? '<button class="btn noprint" id="csvBtn">⬇ CSV</button>' : ''}</div>
+      <button class="btn noprint" id="printBtn">${ic('print')}พิมพ์</button>${m ? `<button class="btn noprint" id="csvBtn">${ic('download')}ดาวน์โหลด CSV</button>` : ''}</div>
     ${monthBar()}
     <div class="kpis"><div class="kpi"><div class="l">จำนวนคณะ</div><div class="v">${list.length}</div></div>
       <div class="kpi"><div class="l">ข้าวกล่องรวม</div><div class="v">${num(boxes(list))}</div></div>
@@ -593,7 +819,7 @@ function exportCSV(list) {
 }
 
 function pVendors() {
-  $('#page').innerHTML = `<div class="row"><h2 class="sp">ร้านค้า</h2><button class="btn p" data-act="vendor">+ เพิ่มร้าน</button></div>
+  $('#page').innerHTML = `<div class="row"><h2 class="sp">ร้านค้า</h2><button class="btn p" data-act="vendor">${ic('plus')}เพิ่มร้าน</button></div>
     <div class="tw"><table><thead><tr><th>ร้าน</th><th>ผู้ติดต่อ</th><th>โทร</th><th class="n">ราคา/กล่อง</th><th class="n">มูลนิธิ/กล่อง</th><th>บัญชี</th><th>สถานะ</th><th></th></tr></thead><tbody>
     ${S.vendors.map(v => `<tr><td><b>${esc(v.name)}</b></td><td>${esc(v.contact)}</td><td>${esc(v.phone)}</td><td class="n">${baht(v.default_price)}</td><td class="n">${baht(v.default_foundation)}</td><td class="small">${esc(v.bank_info)}</td>
       <td>${v.active === false || v.active === 'FALSE' ? '<span class="st st-CANCELLED">ปิด</span>' : '<span class="st st-PAID">ใช้งาน</span>'}</td><td><button class="btn sm" data-act="vendor" data-id="${v.id}">แก้ไข</button></td></tr>`).join('')}
@@ -603,9 +829,9 @@ async function pUsers() {
   $('#page').innerHTML = '<h2>บัญชีผู้ใช้</h2><div class="empty">กำลังโหลด…</div>';
   const us = await api('listUsers');
   S.users = us;
-  $('#page').innerHTML = `<div class="row"><h2 class="sp">บัญชีผู้ใช้ (ส่วนกลางของแต่ละทีม)</h2><button class="btn p" data-act="user">+ เพิ่มบัญชี</button></div>
+  $('#page').innerHTML = `<div class="row"><h2 class="sp">บัญชีผู้ใช้ (ส่วนกลางของแต่ละทีม)</h2><button class="btn p" data-act="user">${ic('plus')}เพิ่มบัญชี</button></div>
     <div class="card small" style="background:#eff6ff;border-color:#bfdbfe;margin-bottom:12px">
-      ใช้ 1 บัญชีต่อทีม ส่งชื่อผู้ใช้/รหัสผ่านให้ผู้รับผิดชอบ · ตอนเข้าระบบทุกคนต้องกรอก <b>ชื่อผู้ปฏิบัติงาน</b> ซึ่งจะถูกบันทึกเป็นผู้บันทึกใน Log<br>
+      <b>ADMIN</b> ทำได้ทุกอย่าง · <b>อาคารโขน</b> ใส่ข้อมูลคณะ · <b>การเงิน</b> ตรวจรับและจ่ายเงินร้าน<br>ใช้ 1 บัญชีต่อทีม ส่งชื่อผู้ใช้/รหัสผ่านให้ผู้รับผิดชอบ · ตอนเข้าระบบทุกคนต้องกรอก <b>ชื่อผู้ปฏิบัติงาน</b> ซึ่งจะถูกบันทึกเป็นผู้บันทึกใน Log<br>
       เมื่อเปลี่ยนผู้รับผิดชอบ → กด <b>ตั้งรหัสใหม่</b> ทุกเครื่องที่ใช้บัญชีนั้นอยู่จะถูกออกจากระบบทันที</div>
     <div class="tw"><table><thead><tr><th>ชื่อผู้ใช้</th><th>ชื่อบัญชี</th><th>ทีม</th><th>อีเมล (รับแจ้งเตือน)</th><th>แก้ไขล่าสุด</th><th>สถานะ</th><th></th></tr></thead><tbody>
     ${us.map(u => `<tr><td><b>${esc(u.username)}</b></td><td>${esc(u.display_name)}</td><td><span class="badge role-${u.role}">${ROLE[u.role]}</span></td><td>${esc(u.email) || '-'}</td>
@@ -627,19 +853,19 @@ async function pLogs() {
 
 /* ======================== MODALS ======================== */
 function modal(title, body, foot = '', cls = '') {
-  $('#modalRoot').innerHTML = `<div class="ov"><div class="md ${cls}"><div class="mh"><h3>${title}</h3><button class="x" data-close>×</button></div>
+  $('#modalRoot').innerHTML = `<div class="ov"><div class="md ${cls}"><div class="mh"><h3 style="display:flex;align-items:center;gap:10px">${title}</h3><button class="x" data-close aria-label="ปิด">${ic('x')}</button></div>
     <div class="mb">${body}</div>${foot ? `<div class="mf">${foot}</div>` : ''}</div></div>`;
 }
 function closeModal() { $('#modalRoot').innerHTML = ''; }
 
 function showTodayPopup() {
   const t = todays();
-  const pend = S.orders.filter(o => o.status === 'RECEIVED').length;
-  const body = `<p style="margin-top:0">วันนี้ <b>${thDateLong(today())}</b> มีการส่งข้าวกล่องให้ <b>${t.length} คณะ</b> รวม <b>${num(t.reduce((s,o) => s + Number(o.boxes), 0))} กล่อง</b></p>
-    ${S.user.role === 'FINANCE' && pend ? `<div class="card" style="background:#eff6ff;border-color:#bfdbfe;margin-bottom:10px">มีรายการรอการเงินตรวจสอบ <b>${pend}</b> รายการ</div>` : ''}
+  const pend = S.orders.filter(o => PAYABLE.includes(o.status)).length;
+  const body = `<p class="lead">${thDateLong(today())} มีคณะเยี่ยมชมรับข้าวกล่อง <b>${t.length} คณะ</b> รวม <b>${num(t.reduce((s,o) => s + Number(o.boxes), 0))} กล่อง</b></p>
+    ${can('pay') && pend ? `<div class="note">มีรายการตรวจรับแล้วรอจ่ายเงิน <b>${pend}</b> รายการ</div>` : ''}
     <div class="grid">${t.map(o => orderCard(o)).join('')}</div>`;
-  modal('📢 แจ้งเตือน · ส่งข้าวกล่องวันนี้', body,
-    `<button class="btn" id="popMute">ไม่ต้องแสดงอีกวันนี้</button><button class="btn p" data-close>รับทราบ</button>`, 'pop wide');
+  modal(`${ic('bell','bellc')}ส่งข้าวกล่องวันนี้`, body,
+    `<button class="btn" id="popMute">ไม่ต้องแสดงอีกวันนี้</button><button class="btn p" data-close>รับทราบ</button>`, 'pop');
   $('.ov .md').classList.add('pop');
   $('#popMute').onclick = () => { store.set('lb_pop_' + S.user.username + '_' + today(), '1'); closeModal(); };
 }
@@ -657,17 +883,17 @@ function orderForm(id) {
         ${vs.map(v => `<option value="${v.id}" ${v.id === o.vendor_id ? 'selected' : ''}>${esc(v.name)}</option>`).join('')}</select></div></div>
       <div class="f"><label>เมนู *</label><textarea name="menu" rows="2" required>${esc(o.menu)}</textarea></div>
       <div class="f2"><div class="f"><label>จำนวนกล่อง *</label><input type="number" min="1" name="boxes" value="${esc(o.boxes)}" required></div>
-        <div class="f"><label>ราคา/กล่อง (บาท)</label><input type="number" step="0.01" min="0" name="price_per_box" value="${esc(o.price_per_box ?? '')}"></div></div>
-      <div class="f2"><div class="f"><label>มูลนิธิได้/กล่อง (บาท)</label><input type="number" step="0.01" min="0" name="foundation_per_box" value="${esc(o.foundation_per_box ?? '')}"></div>
         <div class="f"><label>หมายเหตุ</label><input name="note" value="${esc(o.note)}"></div></div>
-      <div class="calc" id="oCalc"></div>
+      ${can('price') ? `<div class="f2"><div class="f"><label>ราคา/กล่อง (บาท)</label><input type="number" step="0.01" min="0" name="price_per_box" value="${esc(o.price_per_box ?? '')}"></div>
+        <div class="f"><label>มูลนิธิได้/กล่อง (บาท)</label><input type="number" step="0.01" min="0" name="foundation_per_box" value="${esc(o.foundation_per_box ?? '')}"></div></div>
+      <div class="calc" id="oCalc"></div>` : '<div class="hint">ราคาคิดตามค่ามาตรฐานของร้านที่ ADMIN ตั้งไว้</div>'}
     </form>`,
-    `${id && o.status !== 'PAID' ? '<button class="btn bad" id="oCancel">ยกเลิกรายการ</button><span class="sp"></span>' : ''}
+    `${id && canEdit(o) ? '<button class="btn bad" id="oCancel">ยกเลิกรายการ</button><span class="sp"></span>' : ''}
      <button class="btn" data-close>ปิด</button><button class="btn p" id="oSave">บันทึก</button>`);
   const f = $('#oForm');
-  const upd = () => { const b = +f.boxes.value || 0, p = +f.price_per_box.value || 0, fd = +f.foundation_per_box.value || 0;
+  const upd = () => { if (!f.price_per_box) return; const b = +f.boxes.value || 0, p = +f.price_per_box.value || 0, fd = +f.foundation_per_box.value || 0;
     $('#oCalc').innerHTML = `<span>ยอดเงิน <b>${baht(b*p)}</b></span><span>มูลนิธิได้ <b>${baht(b*fd)}</b></span><span>จ่ายร้าน <b>${baht(b*(p-fd))}</b></span>`; };
-  f.vendor_id.onchange = () => { const v = S.vendors.find(x => x.id === f.vendor_id.value); if (v) { f.price_per_box.value = v.default_price; f.foundation_per_box.value = v.default_foundation; } upd(); };
+  f.vendor_id.onchange = () => { const v = S.vendors.find(x => x.id === f.vendor_id.value); if (v && f.price_per_box) { f.price_per_box.value = v.default_price; f.foundation_per_box.value = v.default_foundation; } upd(); };
   f.oninput = upd; upd();
   $('#oSave').onclick = async (e) => {
     if (!f.reportValidity()) return;
@@ -691,12 +917,12 @@ function compress(file, max = 1600, q = 0.8) {
 }
 function photoPicker(id) {
   return `<input type="file" id="${id}" accept="image/*" multiple class="hidden">
-    <div class="drop" data-pick="${id}">📷 ถ่ายรูป / เลือกรูป (เลือกได้หลายรูป)</div><div class="ph" id="${id}Prev" style="margin-top:8px"></div>`;
+    <div class="drop" data-pick="${id}">${ic('receive')}ถ่ายรูป หรือเลือกรูปจากเครื่อง (ได้หลายรูป)</div><div class="ph" id="${id}Prev" style="margin-top:8px"></div>`;
 }
 function bindPicker(id) {
   const inp = $('#' + id), files = [];
   inp.onchange = () => { files.push(...inp.files); inp.value = ''; draw(); };
-  const draw = () => { $('#' + id + 'Prev').innerHTML = files.map((f, i) => `<div><img src="${URL.createObjectURL(f)}"><span data-rm="${i}" style="cursor:pointer">ลบ ✕</span></div>`).join('');
+  const draw = () => { $('#' + id + 'Prev').innerHTML = files.map((f, i) => `<div><img src="${URL.createObjectURL(f)}"><span data-rm="${i}" style="cursor:pointer">ลบ</span></div>`).join('');
     $('#' + id + 'Prev').querySelectorAll('[data-rm]').forEach(b => b.onclick = () => { files.splice(+b.dataset.rm, 1); draw(); }); };
   return files;
 }
@@ -712,11 +938,11 @@ async function receiveForm(id) {
   const o = byId(id);
   const existing = await api('listPhotos', {order_id:id});
   const ex = existing.filter(p => p.kind === 'delivery');
-  modal('📷 ตรวจรับข้าวกล่อง', `
-    <div class="card" style="background:var(--soft);border-color:#bfdbfe;margin-bottom:14px">
-      <b>${esc(o.group_name)}</b><div class="small">${thDate(o.service_date)} เวลา ${esc(o.service_time)} น. · ร้าน <b>${esc(o.vendor_name)}</b></div>
+  modal(PAYABLE.includes(o.status) ? 'แก้ไขการตรวจรับ' : 'ตรวจรับข้าวกล่อง', `
+    <div class="sum-box">
+      <b class="t">${esc(o.group_name)}</b><div class="small">${thDate(o.service_date)} เวลา ${esc(o.service_time)} น. · ร้าน <b>${esc(o.vendor_name)}</b></div>
       <div class="small">สั่ง <b>${num(o.boxes)} กล่อง</b> · ${esc(o.menu)}</div>
-      ${o.status === 'RETURNED' ? `<div class="small" style="color:var(--bad);margin-top:6px">การเงินแจ้งแก้ไข: ${esc(o.verify_note)}</div>` : ''}</div>
+      ${PAYABLE.includes(o.status) ? `<div class="small" style="color:var(--warn);margin-top:6px">ตรวจรับไปแล้ว — กำลังแก้ไขการตรวจรับ (บันทึกลง Log)</div>` : ''}</div>
     <form id="rForm">
       <div class="f2"><div class="f"><label>วันที่-เวลาที่ส่งมอบจริง *</label><input type="datetime-local" name="received_at" value="${esc(o.received_at || nowLocal())}" required></div>
         <div class="f"><label>จำนวนกล่องที่รับจริง *</label><input type="number" min="0" name="received_boxes" value="${esc(o.received_boxes !== '' && o.received_boxes != null ? o.received_boxes : o.boxes)}" required></div></div>
@@ -725,7 +951,7 @@ async function receiveForm(id) {
         ${ex.length ? `<div class="ph" style="margin-bottom:8px">${ex.map(p => `<a href="${esc(p.url)}" target="_blank"><img src="${esc(p.url)}"></a>`).join('')}</div>` : ''}
         ${photoPicker('rPh')}</div>
       <div class="small mute">ผู้บันทึก: <b>${esc(S.user.operator)}</b> [${esc(S.user.username)}] · ระบบบันทึกเวลาที่กดบันทึกลง Log อัตโนมัติ<br>ไม่ใช่คุณ? กด "เปลี่ยนผู้ปฏิบัติงาน" ที่มุมขวาบนก่อนบันทึก</div>
-    </form>`, `<button class="btn" data-close>ปิด</button><button class="btn p" id="rSave">✔ บันทึกตรวจรับ</button>`);
+    </form>`, `<button class="btn" data-close>ปิด</button><button class="btn p" id="rSave">${ic('check')}บันทึกการตรวจรับ</button>`);
   const files = bindPicker('rPh');
   $('#rSave').onclick = async (e) => {
     const f = $('#rForm'); if (!f.reportValidity()) return;
@@ -735,26 +961,26 @@ async function receiveForm(id) {
     const btn = e.target; btn.disabled = true;
     try { await uploadAll(id, files, 'delivery', btn); btn.textContent = 'กำลังบันทึก…'; await api('receiveOrder', p);
       closeModal(); toast('บันทึกตรวจรับแล้ว'); reload(); }
-    catch (err) { toast(err.message, true); btn.disabled = false; btn.textContent = '✔ บันทึกตรวจรับ'; }
+    catch (err) { toast(err.message, true); btn.disabled = false; btn.innerHTML = `${ic('check')}บันทึกการตรวจรับ`; }
   };
 }
 
 function payForm(id) {
   const o = byId(id);
   modal('บันทึกจ่ายเงินร้านค้า', `
-    <div class="card" style="background:var(--soft);border-color:#bfdbfe;margin-bottom:14px"><b>${esc(o.group_name)}</b> · ${thDate(o.service_date)}
+    <div class="sum-box"><b class="t">${esc(o.group_name)}</b> <span class="mute small">${thDate(o.service_date)}</span>
       <div class="money"><div>ร้าน<b style="font-size:14px">${esc(o.vendor_name)}</b></div><div>ยอดเงิน<b>${baht(o.total_amount)}</b></div><div>มูลนิธิได้<b>${baht(o.foundation_amount)}</b></div><div>จ่ายร้าน<b>${baht(o.vendor_amount)}</b></div></div>
       <div class="small mute" style="margin-top:6px">บัญชีร้าน: ${esc((S.vendors.find(v => v.id === o.vendor_id) || {}).bank_info || '-')}</div></div>
     <form id="pForm"><div class="f2"><div class="f"><label>วันที่จ่าย *</label><input type="date" name="paid_at" value="${today()}" required></div>
       <div class="f"><label>เลขที่ใบสำคัญ / อ้างอิงการโอน</label><input name="pay_ref"></div></div>
       <div class="f"><label>แนบหลักฐานการจ่าย (สลิป/ใบสำคัญจ่าย) — ไม่บังคับ</label>${photoPicker('pPh')}</div></form>`,
-    `<button class="btn" data-close>ปิด</button><button class="btn ok" id="pSave">บันทึกจ่ายแล้ว</button>`);
+    `<button class="btn" data-close>ปิด</button><button class="btn ok" id="pSave">${ic('check')}บันทึกจ่ายแล้ว</button>`);
   const files = bindPicker('pPh');
   $('#pSave').onclick = async (e) => {
     const f = $('#pForm'); if (!f.reportValidity()) return;
     const p = Object.fromEntries(new FormData(f)); p.id = id; const btn = e.target; btn.disabled = true;
     try { await uploadAll(id, files, 'payment', btn); await api('payOrder', p); closeModal(); toast('บันทึกจ่ายแล้ว'); reload(); }
-    catch (err) { toast(err.message, true); btn.disabled = false; btn.textContent = 'บันทึกจ่ายแล้ว'; }
+    catch (err) { toast(err.message, true); btn.disabled = false; btn.innerHTML = `${ic('check')}บันทึกจ่ายแล้ว`; }
   };
 }
 
@@ -776,32 +1002,25 @@ async function detail(id) {
         <span>กล่อง</span><span>สั่ง ${num(o.boxes)} ${o.received_boxes !== '' && o.received_boxes != null ? `· รับจริง <b>${num(o.received_boxes)}</b>` : ''}</span>
         ${o.note ? `<span>หมายเหตุ</span><span>${esc(o.note)}</span>` : ''}
         ${o.receive_note ? `<span>หมายเหตุรับ</span><span>${esc(o.receive_note)}</span>` : ''}
-        ${o.verify_note ? `<span>การเงิน</span><span>${esc(o.verify_note)}</span>` : ''}
         ${o.cancel_reason ? `<span>ยกเลิก</span><span>${esc(o.cancel_reason)}</span>` : ''}
       </div>${m ? `<div class="money"><div>ราคา/กล่อง<b>${baht(o.price_per_box)}</b></div><div>ยอดเงิน<b>${baht(o.total_amount)}</b></div><div>มูลนิธิได้<b>${baht(o.foundation_amount)}</b></div><div>จ่ายร้าน<b>${baht(o.vendor_amount)}</b></div></div>` : ''}</div>
       <div><b>ขั้นตอน</b><div class="tl" style="margin-top:8px">
         ${step(1, `สร้างรายการ · ${esc(o.created_by)}<div class="small mute">${thDT(o.created_at)}</div>`)}
-        ${step(o.received_at, `ตรวจรับ/ส่งมอบ ${o.received_at ? '· ' + esc(o.received_by) + `<div class="small mute">ส่งมอบ ${thDT(o.received_at)} · บันทึก ${thDT(o.received_saved_at)}</div>` : ''}`)}
-        ${step(o.verified_at, `การเงินตรวจสอบ ${o.verified_at ? '· ' + esc(o.verified_by) + `<div class="small mute">${thDT(o.verified_at)}</div>` : ''}`)}
-        ${step(o.status === 'PAID', `จ่ายเงินร้าน ${o.status === 'PAID' ? `<div class="small mute">${thDate(o.paid_at)}${m && o.pay_ref ? ' · อ้างอิง ' + esc(o.pay_ref) : ''}</div>` : ''}`)}
+        ${step(o.received_at, `ตรวจรับ (การเงิน) ${o.received_at ? '· ' + esc(o.received_by) + `<div class="small mute">ส่งมอบ ${thDT(o.received_at)} · บันทึก ${thDT(o.received_saved_at)}</div>` : ''}`)}
+        ${step(o.status === 'PAID', `จ่ายเงินร้าน ${o.status === 'PAID' ? `· ${esc(o.paid_by || '')}<div class="small mute">${thDate(o.paid_at)}${m && o.pay_ref ? ' · อ้างอิง ' + esc(o.pay_ref) : ''}</div>` : ''}`)}
       </div></div></div>
     <h3>รูปหลักฐาน (${photos.length})</h3>
     ${photos.length ? `<div class="ph">${photos.map(p => `<a href="${esc(p.url)}" target="_blank" title="${esc(p.uploaded_by)} ${thDT(p.uploaded_at)}"><img src="${esc(p.url)}" loading="lazy"><span>${p.kind === 'payment' ? 'จ่ายเงิน' : 'ส่งมอบ'}</span></a>`).join('')}</div>` : '<div class="empty">ยังไม่มีรูป</div>'}
     <h3>ประวัติรายการนี้ (Log)</h3>
     <div class="tw"><table><tbody>${logs.map(x => `<tr><td class="small" style="white-space:nowrap">${thDT(x.timestamp)}</td><td>${esc(x.operator || x.display_name)} <span class="badge role-${x.role}">${esc(x.username)}</span></td><td>${esc(x.action)}</td></tr>`).join('')}</tbody></table></div>
-    ${o.status === 'RECEIVED' && can('verify') ? `<div class="f" style="margin-top:14px"><label>หมายเหตุการตรวจสอบ (จำเป็นเมื่อส่งกลับแก้ไข)</label><textarea id="vNote" rows="2"></textarea></div>` : ''}`;
+`;
   const foot = [];
-  if (can('create') && !['PAID','CANCELLED'].includes(o.status)) foot.push(`<button class="btn" data-act="edit" data-id="${id}">แก้ไข</button>`);
-  if (can('receive') && ['SCHEDULED','RETURNED'].includes(o.status)) foot.push(`<button class="btn p" data-act="receive" data-id="${id}">📷 ตรวจรับ</button>`);
-  if (can('verify') && o.status === 'RECEIVED') foot.push(`<button class="btn bad" id="vRet">ส่งกลับแก้ไข</button><button class="btn p" id="vOk">✔ ตรวจสอบผ่าน</button>`);
-  if (can('pay') && o.status === 'VERIFIED') foot.push(`<button class="btn bad" id="vRet">ส่งกลับแก้ไข</button><button class="btn ok" data-act="pay" data-id="${id}">บันทึกจ่าย</button>`);
+  if (canEdit(o)) foot.push(`<button class="btn" data-act="edit" data-id="${id}">${ic('edit')}แก้ไขข้อมูลคณะ</button>`);
+  if (can('receive') && RECV.includes(o.status)) foot.push(`<button class="btn p" data-act="receive" data-id="${id}">${ic('receive')}ตรวจรับ</button>`);
+  if (can('receive') && PAYABLE.includes(o.status)) foot.push(`<button class="btn" data-act="receive" data-id="${id}">แก้ไขการตรวจรับ</button>`);
+  if (can('pay') && PAYABLE.includes(o.status)) foot.push(`<button class="btn ok" data-act="pay" data-id="${id}">${ic('pay')}บันทึกจ่าย</button>`);
   foot.push('<button class="btn" data-close>ปิด</button>');
   modal('รายละเอียด ' + esc(id), body, foot.join(''), 'wide');
-  if ($('#vOk')) $('#vOk').onclick = async (e) => { await run(() => api('verifyOrder', {id, note:$('#vNote').value}), e.target); closeModal(); toast('ตรวจสอบผ่าน'); reload(); };
-  if ($('#vRet')) $('#vRet').onclick = async (e) => {
-    const note = ($('#vNote') && $('#vNote').value) || prompt('ระบุสิ่งที่ต้องแก้ไข'); if (!note) return toast('กรุณาระบุสิ่งที่ต้องแก้ไข', true);
-    await run(() => api('returnOrder', {id, note}), e.target); closeModal(); toast('ส่งกลับแล้ว'); reload();
-  };
 }
 
 function vendorForm(id) {
@@ -812,7 +1031,7 @@ function vendorForm(id) {
     <div class="f2"><div class="f"><label>ราคามาตรฐาน/กล่อง</label><input type="number" step="0.01" name="default_price" value="${esc(v.default_price)}"></div>
       <div class="f"><label>มูลนิธิได้/กล่อง</label><input type="number" step="0.01" name="default_foundation" value="${esc(v.default_foundation)}"></div></div>
     <div class="f"><label>บัญชีรับเงิน</label><input name="bank_info" value="${esc(v.bank_info)}"></div>
-    <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" name="active" style="width:auto" ${v.active === false || v.active === 'FALSE' ? '' : 'checked'}> เปิดใช้งาน</label></form>`,
+    <label class="chk"><input type="checkbox" name="active" ${v.active === false || v.active === 'FALSE' ? '' : 'checked'}> เปิดใช้งาน</label></form>`,
     `<button class="btn" data-close>ปิด</button><button class="btn p" id="vSave">บันทึก</button>`);
   $('#vSave').onclick = async (e) => { const f = $('#vForm'); if (!f.reportValidity()) return;
     const p = Object.fromEntries(new FormData(f)); p.active = f.active.checked; p.default_price = +p.default_price || 0; p.default_foundation = +p.default_foundation || 0; if (id) p.id = id;
@@ -825,9 +1044,9 @@ function userForm(id) {
       <div class="f"><label>ชื่อบัญชี *</label><input name="display_name" value="${esc(u.display_name)}" placeholder="เช่น ทีมอาคารโขน" required></div></div>
     <div class="f2"><div class="f"><label>ทีม *</label><select name="role">${Object.entries(ROLE).map(([k,t]) => `<option value="${k}" ${u.role === k ? 'selected' : ''}>${t}</option>`).join('')}</select></div>
       <div class="f"><label>${id ? 'รหัสผ่านใหม่ (เว้นว่าง = ไม่เปลี่ยน)' : 'รหัสผ่าน *'}</label>
-        <div class="pw"><input name="password" id="uPass" type="text" minlength="6" ${id ? '' : 'required'} autocomplete="off" placeholder="ADMIN กำหนดเอง อย่างน้อย 6 ตัว"><button type="button" data-eye="uPass">👁</button></div></div></div>
+        <div class="pw"><input name="password" id="uPass" type="text" minlength="6" ${id ? '' : 'required'} autocomplete="off" placeholder="ADMIN กำหนดเอง อย่างน้อย 6 ตัว"><button type="button" data-eye="uPass" aria-label="แสดงรหัสผ่าน">${ic('eye')}</button></div></div></div>
     <div class="f"><label>อีเมลรับแจ้งเตือนทุกเช้า (ไม่บังคับ)</label><input type="email" name="email" value="${esc(u.email)}"></div>
-    <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" name="active" style="width:auto" ${u.active === false || u.active === 'FALSE' ? '' : 'checked'}> เปิดใช้งาน</label>
+    <label class="chk"><input type="checkbox" name="active" ${u.active === false || u.active === 'FALSE' ? '' : 'checked'}> เปิดใช้งาน</label>
     ${id ? '<div class="hint" style="margin-top:8px">ตั้งรหัสใหม่แล้ว ทุกเครื่องที่ใช้บัญชีนี้จะถูกออกจากระบบ</div>' : ''}</form>`,
     `<button class="btn" data-close>ปิด</button><button class="btn p" id="uSave">บันทึก</button>`);
   $('#uSave').onclick = async (e) => { const f = $('#uForm'); if (!f.reportValidity()) return;
@@ -838,9 +1057,9 @@ function userForm(id) {
 }
 function showCred(user, pass) {
   const text = `ระบบแจ้งเตือนข้าวกล่องคณะเยี่ยมชม\n${location.href.split('#')[0]}\nชื่อผู้ใช้: ${user}\nรหัสผ่าน: ${pass}`;
-  modal('ส่งข้อมูลเข้าระบบให้ผู้รับผิดชอบ', `<div class="cred">ชื่อผู้ใช้: <b>${esc(user)}</b><br>รหัสผ่าน: <b>${esc(pass)}</b></div>
+  modal('ข้อมูลเข้าระบบ', `<div class="cred">ชื่อผู้ใช้: <b>${esc(user)}</b><br>รหัสผ่าน: <b>${esc(pass)}</b></div>
     <p class="small mute">หน้านี้จะแสดงรหัสครั้งเดียว ระบบเก็บรหัสแบบเข้ารหัสทางเดียว ดูย้อนหลังไม่ได้ (ลืมให้ตั้งใหม่)</p>`,
-    `<button class="btn" id="cCopy">📋 คัดลอก</button><button class="btn p" data-close>เสร็จ</button>`);
+    `<button class="btn" id="cCopy">${ic('copy')}คัดลอก</button><button class="btn p" data-close>เสร็จ</button>`);
   $('#cCopy').onclick = () => navigator.clipboard?.writeText(text).then(() => toast('คัดลอกแล้ว'), () => toast('คัดลอกไม่ได้ กรุณาจดเอง', true));
 }
 
@@ -857,7 +1076,7 @@ document.addEventListener('click', e => {
   const id = a.dataset.id;
   ({new:() => orderForm(), edit:() => orderForm(id), detail:() => detail(id), receive:() => receiveForm(id), pay:() => payForm(id),
     vendor:() => vendorForm(id), user:() => userForm(id),
-    kick:async () => { if (!confirm(`บังคับให้ทุกเครื่องที่ใช้บัญชี ${id} ออกจากระบบ?`)) return; await run(() => api('forceLogout', {username:id})); toast('ดำเนินการแล้ว'); if (id === S.user.username) logout(true); }})[a.dataset.act]?.();
+    kick:async () => { if (!confirm(`บังคับให้ทุกเครื่องที่ใช้บัญชี ${id} ออกจากระบบ?`)) return; await run(() => api('forceLogout', {username:id})); toast('บังคับออกแล้ว'); if (id === S.user.username) logout(true); }})[a.dataset.act]?.();
 });
 document.addEventListener('change', e => {
   if (e.target.id === 'monPick' && e.target.value) { S.month = e.target.value; reload(); }
@@ -871,10 +1090,12 @@ $('#lgOp').value = store.get('lb_operator') || '';
 document.querySelectorAll('[data-demo]').forEach(b => b.onclick = () => {
   const op = $('#lgOp').value.trim() || ({admin:'สมชาย ใจดี', khon:'วิภา รักงาน', finance:'กมล ละเอียด'})[b.dataset.demo];
   login(b.dataset.demo, b.dataset.demo + '1234', op).catch(err => toast(err.message, true)); });
-$('#opBtn').onclick = async e => { e.preventDefault();
+$('#meBtn').onclick = e => { e.stopPropagation(); $('#meMenu').classList.toggle('hidden'); };
+document.addEventListener('click', e => { if (!e.target.closest('.me')) $('#meMenu').classList.add('hidden'); });
+$('#opBtn').onclick = async e => { e.preventDefault(); $('#meMenu').classList.add('hidden');
   const n = prompt('ชื่อผู้ปฏิบัติงานคนใหม่ (จะใช้เป็นผู้บันทึกนับจากนี้)', ''); if (!n || !n.trim()) return;
   const u = await run(() => api('setOperator', {operator:n.trim()}));
-  S.user.operator = u.operator; store.set('lb_operator', u.operator); $('#hdName').textContent = u.operator;
+  S.user.operator = u.operator; store.set('lb_operator', u.operator); setWho();
   if (API_URL) store.set('lb_session', JSON.stringify({token:S.token, user:S.user})); toast('เปลี่ยนเป็น ' + u.operator); };
 /* ตารางทุกตารางแปลงเป็นการ์ดบนมือถือ: ติด data-l จากหัวตารางให้แต่ละช่อง */
 function labelTables(root) {
